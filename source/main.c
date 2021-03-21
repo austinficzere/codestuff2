@@ -12,7 +12,6 @@ typedef struct {
 typedef struct {
 	int x,y;
 	int speed;
-	struct image = frogImage;
 } Player;
 
 struct fbs framebufferstruct;
@@ -31,7 +30,12 @@ int main(){
 	player -> y = 5;
 	player -> speed = 10;
 
-	drawPlayer(player);
+	while(1){
+		drawPlayer(player);
+		wait(1);
+		player -> x = (player -> x) + (player-> speed);
+		clearPlayer(player);
+	}
 	
 	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
 	
@@ -62,8 +66,19 @@ void drawPlayer(Player *player){
 		free(pixel);
 }
 
-void clearPlayer(Player *player){
-	int width;
+void clearPlayer(Player *player){\
+	Pixel *pixel = malloc(sizeof(Pixel));
+
+	int width = frogImage.width;
+	int height = frogImage.height;
+
+	for(int y = 0; y<height;y++){
+		for(int x = 0;x<width;x++){
+		pixel -> color = 0x0;
+		pixel -> x = (player -> x) + x;
+		pixel -> y = (player -> y) + y;
+		}
+	}
 }
 
 /* Draw a pixel */
