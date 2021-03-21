@@ -49,7 +49,7 @@ we initialize our clock, latch, and data lines. Now, we check in a loop conditio
 controller. If it has then we exit the loop and otherwise we enter the loop. We then read the info from our SNES 
 controller to determine if a button has been pressed. If a button was pressed, we print the correct button.
 */
-int main()
+int controller()
 {
         unsigned int *gpio = getGPIOPtr();
 

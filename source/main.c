@@ -1,3 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include "framebuffer.h"
+#include "Resources/frog.c"
+
 typedef struct {
 	int color;
 	int x, y;
@@ -6,18 +12,58 @@ typedef struct {
 typedef struct {
 	int x,y;
 	int speed;
-	char* image;
+	struct image = frogImage;
 } Player;
 
+struct fbs framebufferstruct;
 
 void drawPixel(Pixel *pixel); 
-void drawPlayer(Player *player)
+void drawPlayer(Player *player);
+void clearPlayer(Player *player);
 
+int main(){
 
+	/* initialize + get FBS */
+	framebufferstruct = initFbInfo();
+	
+	Player *player = malloc(sizeof(Player));
+	player -> x = 5;
+	player -> y = 5;
+	player -> speed = 10;
+
+	drawPlayer(player);
+	
+	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
+	
+	return 0;
+}
 
 
 void drawPlayer(Player *player){
-	
+		
+		Pixel *pixel = malloc(sizeof(Pixel));
+		int width = frogImage.width;
+		int height = frogImage.height;
+
+		int *frogPtr = (int *) frogImage.image_pixels;	
+		int i = 0;
+
+		for(int y = 0;y<height;y++){
+			for(int x = 0;x<width;x++){
+				pixel -> color = frogPtr[i];
+				pixel -> x = (player -> x) + x;
+				pixel -> y = (player -> y) + y;	
+				
+				drawPixel(pixel);
+				i++;
+			}
+		}
+		
+		free(pixel);
+}
+
+void clearPlayer(Player *player){
+	int width;
 }
 
 /* Draw a pixel */
