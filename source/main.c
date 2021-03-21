@@ -3,6 +3,7 @@
 #include <sys/mman.h>
 #include "framebuffer.h"
 #include "Resources/frog.c"
+#include <unistd.h>
 
 typedef struct {
 	int color;
@@ -30,11 +31,15 @@ int main(){
 	player -> y = 5;
 	player -> speed = 10;
 
+
+	drawPlayer(player);
+	clearPlayer(player);
+
 	while(1){
 		drawPlayer(player);
-		wait(1);
-		player -> x = (player -> x) + (player-> speed);
+		sleep(1);
 		clearPlayer(player);
+		player -> x = (player -> x) + (player-> speed);
 	}
 	
 	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
@@ -77,6 +82,8 @@ void clearPlayer(Player *player){\
 		pixel -> color = 0x0;
 		pixel -> x = (player -> x) + x;
 		pixel -> y = (player -> y) + y;
+
+		drawPixel(pixel);
 		}
 	}
 }
