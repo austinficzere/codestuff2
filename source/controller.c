@@ -11,6 +11,7 @@
 #include <wiringPi.h>
 #include <stdio.h>
 #include "initGPIO.h"
+#include "main.c"
 
 #define GPIO_SET_OFF 7          // 28/4
 #define GPIO_CLEAR_OFF 10       // 40/4
@@ -49,36 +50,22 @@ we initialize our clock, latch, and data lines. Now, we check in a loop conditio
 controller. If it has then we exit the loop and otherwise we enter the loop. We then read the info from our SNES 
 controller to determine if a button has been pressed. If a button was pressed, we print the correct button.
 */
-int controller()
+int controller(Memory mem)
 {
         unsigned int *gpio = getGPIOPtr();
-
-        printf("Created by Manbir Sandhu and Austin Ficzere\n\n");
 
         // initializing clock, latch, and data lines
         Init_GPIO(CLK, 1, gpio);
         Init_GPIO(LAT, 1, gpio);
         Init_GPIO(DAT, 0, gpio);
 
-        // Initialzing the buttons pressed and the previously pressed button
+        // Initialzing the button
         int button = NONE_PRESSED;
-        int prevPressed = NONE_PRESSED;
-	
-        // Printing info for the user
-        printf("Please press a button…\n\n");
 
-        // looping while START is not pressed
-        while(!isButtonPressed(button,START_BUTTON)){
-                prevPressed = button;     // Updating the value of the previously pressed button
-	        button = Read_SNES(gpio); // read info from SNES
+        button = Read_SNES(gpio); // read info from SNES
 
-                // Printing button, if the buttons pressed are different from the previous iteration
-	        if(button!=prevPressed && button!=NONE_PRESSED){
-                        printButton(button);
-                }
-                wait(750);
-        }
-        printf("Program is terminating…\n\n");
+        mem -> controllerButton = button;
+
         return 0;
 }
 

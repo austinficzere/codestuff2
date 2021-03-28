@@ -4,6 +4,7 @@
 #include "framebuffer.h"
 #include "Resources/frog.c"
 #include <unistd.h>
+#include "controller.c"
 
 typedef struct {
 	int color;
@@ -14,6 +15,10 @@ typedef struct {
 	int x,y;
 	int speed;
 } Player;
+
+typedef struct {
+	int controllerButton;
+} Memory;
 
 struct fbs framebufferstruct;
 
@@ -31,6 +36,8 @@ int main(){
 	player -> y = 5;
 	player -> speed = 10;
 
+	Memory *mem = malloc(sizeof(Memory));
+	mem -> controllerButton = 0b1111111111111111;
 
 	drawPlayer(player);
 	clearPlayer(player);
@@ -39,7 +46,25 @@ int main(){
 		drawPlayer(player);
 		sleep(1);
 		clearPlayer(player);
-		player -> x = (player -> x) + (player-> speed);
+
+		controller(mem);
+		
+		if ((mem -> controllerButton) == 0b1111111111101111)
+		{
+			player -> y = (player -> y) - (player-> speed);
+		}
+		else if ((mem -> controllerButton) == 0b1111111111011111)
+		{
+			player -> y = (player -> y) + (player-> speed);
+		}
+		else if ((mem -> controllerButton) == 0b1111111110111111)
+		{
+			player -> x = (player -> x) - (player-> speed);
+		}
+		else if ((mem -> controllerButton) == 0b1111111101111111)
+		{
+			player -> x = (player -> x) + (player-> speed);
+		}
 	}
 	
 	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
