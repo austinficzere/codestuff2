@@ -4,7 +4,9 @@
 #include "framebuffer.h"
 #include "Resources/frog.c"
 #include <unistd.h>
-#include "controller.c"
+#include "controller.h"
+#include <pthread.h>
+#include "global.h"
 
 typedef struct {
 	int color;
@@ -15,10 +17,6 @@ typedef struct {
 	int x,y;
 	int speed;
 } Player;
-
-typedef struct {
-	int controllerButton;
-} Memory;
 
 struct fbs framebufferstruct;
 
@@ -36,8 +34,15 @@ int main(){
 	player -> y = 5;
 	player -> speed = 10;
 
-	Memory *mem = malloc(sizeof(Memory));
-	mem -> controllerButton = 0b1111111111111111;
+	struct ControllerStruct *cs;
+	cs = malloc(sizeof(struct ControllerStruct));
+
+	pthread_t controller_id;
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+
+	pthread_create(&controller_id,&attr,controller_thread, (void *) cs);
+
 
 	drawPlayer(player);
 	clearPlayer(player);
@@ -46,22 +51,20 @@ int main(){
 		drawPlayer(player);
 		sleep(1);
 		clearPlayer(player);
-
-		controller(mem);
 		
-		if ((mem -> controllerButton) == 0b1111111111101111)
+		if ((cs -> controllerButton) == 0b1111111111101111)
 		{
 			player -> y = (player -> y) - (player-> speed);
 		}
-		else if ((mem -> controllerButton) == 0b1111111111011111)
+		else if ((cs -> controllerButton) == 0b1111111111011111)
 		{
 			player -> y = (player -> y) + (player-> speed);
 		}
-		else if ((mem -> controllerButton) == 0b1111111110111111)
+		else if ((cs -> controllerButton) == 0b1111111110111111)
 		{
 			player -> x = (player -> x) - (player-> speed);
 		}
-		else if ((mem -> controllerButton) == 0b1111111101111111)
+		else if ((cs -> controllerButton) == 0b1111111101111111)
 		{
 			player -> x = (player -> x) + (player-> speed);
 		}
@@ -70,6 +73,12 @@ int main(){
 	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
 	
 	return 0;
+}
+
+
+void init()
+{
+
 }
 
 

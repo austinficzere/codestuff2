@@ -11,7 +11,8 @@
 #include <wiringPi.h>
 #include <stdio.h>
 #include "initGPIO.h"
-#include "main.c"
+#include <pthread.h>
+#include "global.h"
 
 #define GPIO_SET_OFF 7          // 28/4
 #define GPIO_CLEAR_OFF 10       // 40/4
@@ -31,6 +32,7 @@ void wait(int time);
 int Read_SNES(unsigned int *gpio);
 void printButton(int button);
 int isButtonPressed(int button, int i);
+void *controler(void *arg);
 
 // array of strings to represent the buttons on the SNES controller
 const char * buttonsArr[] = { "B","Y", "Select", "Start", "Joy-pad UP", "Joy-pad DOWN", "Joy-pad LEFT", "Joy-pad RIGHT", "A", "X", "Left", "Right"};
@@ -50,8 +52,10 @@ we initialize our clock, latch, and data lines. Now, we check in a loop conditio
 controller. If it has then we exit the loop and otherwise we enter the loop. We then read the info from our SNES 
 controller to determine if a button has been pressed. If a button was pressed, we print the correct button.
 */
-int controller(Memory mem)
+void  *controller_thread(void *arg)
 {
+
+	struct ControllerStruct *mem = (struct ControllerStruct *)arg;
         unsigned int *gpio = getGPIOPtr();
 
         // initializing clock, latch, and data lines
@@ -61,12 +65,18 @@ int controller(Memory mem)
 
         // Initialzing the button
         int button = NONE_PRESSED;
+	int prevPressed = NONE_PRESSED;
 
-        button = Read_SNES(gpio); // read info from SNES
+	while(!isButtonPressed(button,START_BUTTON)){
+		prevPressed = button;
+        	button = Read_SNES(gpio); // read info from SNES
 
-        mem -> controllerButton = button;
-
-        return 0;
+		if(button != prevPressed && button!=NONE_PRESSED)
+        	{
+			mem -> controllerButton = button;
+		}
+	}
+        pthread_exit(0);
 }
 
 /*
