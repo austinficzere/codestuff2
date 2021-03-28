@@ -16,7 +16,13 @@ typedef struct {
 typedef struct {
 	int x,y;
 	int speed;
+	int orientation;
 } Player;
+
+struct Background {
+	// arrray of background
+	int currentB
+}
 
 struct fbs framebufferstruct;
 
@@ -30,8 +36,8 @@ int main(){
 	framebufferstruct = initFbInfo();
 	
 	Player *player = malloc(sizeof(Player));
-	player -> x = 5;
-	player -> y = 5;
+	player -> x = 30;
+	player -> y = 30;
 	player -> speed = 10;
 
 	struct ControllerStruct *cs;
@@ -49,9 +55,8 @@ int main(){
 
 	while(1){
 		drawPlayer(player);
-		sleep(1);
-		clearPlayer(player);
-		
+		wait(70000);
+		clearPlayer(player);	
 		if ((cs -> controllerButton) == 0b1111111111101111)
 		{
 			player -> y = (player -> y) - (player-> speed);
@@ -93,11 +98,13 @@ void drawPlayer(Player *player){
 
 		for(int y = 0;y<height;y++){
 			for(int x = 0;x<width;x++){
-				pixel -> color = frogPtr[i];
-				pixel -> x = (player -> x) + x;
-				pixel -> y = (player -> y) + y;	
+				if(frogPtr[i]!=0){
+					pixel -> color = frogPtr[i];
+					pixel -> x = (player -> x) + x;
+					pixel -> y = (player -> y) + y;	
 				
-				drawPixel(pixel);
+					drawPixel(pixel);
+				}
 				i++;
 			}
 		}
@@ -105,7 +112,7 @@ void drawPlayer(Player *player){
 		free(pixel);
 }
 
-void clearPlayer(Player *player){\
+void clearPlayer(Player *player){
 	Pixel *pixel = malloc(sizeof(Pixel));
 
 	int width = frogImage.width;
@@ -120,6 +127,25 @@ void clearPlayer(Player *player){\
 		drawPixel(pixel);
 		}
 	}
+	free(pixel);
+}
+
+void drawBackground(struct *Background){
+	Pixel *pixel = malloc(sizeof(Pixel));
+
+	int width = 
+	int height = 
+
+	for(int y = 0;y<height;y++){
+		for(int x = 0;x<width;x++){
+		pixel 
+		pixel -> x = x;
+		pixel -> y = y;
+
+		drawPixel(pixel);
+		}
+	}
+
 }
 
 /* Draw a pixel */
@@ -127,4 +153,10 @@ void drawPixel(Pixel *pixel){
 	long int location = (pixel->x +framebufferstruct.xOff) * (framebufferstruct.bits/8) +
                        (pixel->y+framebufferstruct.yOff) * framebufferstruct.lineLength;
 	*((unsigned short int*)(framebufferstruct.fptr + location)) = pixel->color;
+}
+
+unsigned short int getPixel (int x, int y)
+{
+	long int location = (x + framebufferstruct.xOff) * (framebufferstruct.bits/8) + (y + framebufferstruct.yOff)* framebufferstruct.lineLength;
+	return *((unsigned short int*)(framebufferstruct.fptr + location));
 }

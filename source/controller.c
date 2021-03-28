@@ -70,11 +70,8 @@ void  *controller_thread(void *arg)
 	while(!isButtonPressed(button,START_BUTTON)){
 		prevPressed = button;
         	button = Read_SNES(gpio); // read info from SNES
-
-		if(button != prevPressed && button!=NONE_PRESSED)
-        	{
-			mem -> controllerButton = button;
-		}
+		mem -> controllerButton = button;
+		wait(750);
 	}
         pthread_exit(0);
 }
