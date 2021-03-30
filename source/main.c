@@ -1,8 +1,10 @@
+#include "Resources/image.h"
+#include "Resources/frog.c"
+#include "Resources/city.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
 #include "framebuffer.h"
-#include "Resources/frog.c"
 #include <unistd.h>
 #include "controller.h"
 #include <pthread.h>
@@ -21,14 +23,20 @@ typedef struct {
 
 struct Background {
 	// arrray of background
-	int currentB
-}
+	const struct imageStruct *backgrounds[4];
+	int currentB;
+} bg = {{&cityImage, NULL, NULL, NULL}, 0};
 
 struct fbs framebufferstruct;
 
 void drawPixel(Pixel *pixel); 
-void drawPlayer(Player *player);
-void clearPlayer(Player *player);
+void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation);
+void clearObj(const struct imageStruct *img, int xOff, int yOff);
+void drawBackground(struct Background *bg);
+void init(Player *player);
+
+const int PLAYER_SPD = 10;
+
 
 int main(){
 
@@ -36,9 +44,8 @@ int main(){
 	framebufferstruct = initFbInfo();
 	
 	Player *player = malloc(sizeof(Player));
-	player -> x = 30;
-	player -> y = 30;
-	player -> speed = 10;
+	
+	init(player);
 
 	struct ControllerStruct *cs;
 	cs = malloc(sizeof(struct ControllerStruct));
@@ -50,13 +57,11 @@ int main(){
 	pthread_create(&controller_id,&attr,controller_thread, (void *) cs);
 
 
-	drawPlayer(player);
-	clearPlayer(player);
-
 	while(1){
-		drawPlayer(player);
+
+		draw((int *) frogImage.image_pixels, frogImage.width,frogImage.height, player->x, player->y, player -> orientation);
 		wait(70000);
-		clearPlayer(player);	
+		clearObj(&frogImage,player ->x, player->y);
 		if ((cs -> controllerButton) == 0b1111111111101111)
 		{
 			player -> y = (player -> y) - (player-> speed);
@@ -81,30 +86,27 @@ int main(){
 }
 
 
-void init()
+void init(Player *player)
 {
-
+	player -> x = 30;
+	player -> y = 30;
+	player -> speed = PLAYER_SPD;
+	player -> orientation = 0;
+	
 }
 
 
-void drawPlayer(Player *player){
-		
+void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation){
+
 		Pixel *pixel = malloc(sizeof(Pixel));
-		int width = frogImage.width;
-		int height = frogImage.height;
 
-		int *frogPtr = (int *) frogImage.image_pixels;	
 		int i = 0;
-
 		for(int y = 0;y<height;y++){
 			for(int x = 0;x<width;x++){
-				if(frogPtr[i]!=0){
-					pixel -> color = frogPtr[i];
-					pixel -> x = (player -> x) + x;
-					pixel -> y = (player -> y) + y;	
-				
-					drawPixel(pixel);
-				}
+				pixel -> color = pixels[i];
+				pixel -> x = xOff + x;
+				pixel -> y = yOff + y;	
+				drawPixel(pixel);
 				i++;
 			}
 		}
@@ -112,40 +114,23 @@ void drawPlayer(Player *player){
 		free(pixel);
 }
 
-void clearPlayer(Player *player){
+void clearObj(const struct imageStruct *img, int xOff, int yOff){
 	Pixel *pixel = malloc(sizeof(Pixel));
 
-	int width = frogImage.width;
-	int height = frogImage.height;
+	int width = img -> width;
+	int height = img -> height;
 
 	for(int y = 0; y<height;y++){
 		for(int x = 0;x<width;x++){
+		// replace image with previous item
 		pixel -> color = 0x0;
-		pixel -> x = (player -> x) + x;
-		pixel -> y = (player -> y) + y;
+		pixel -> x = xOff + x;
+		pixel -> y = yOff + y;
 
 		drawPixel(pixel);
 		}
 	}
 	free(pixel);
-}
-
-void drawBackground(struct *Background){
-	Pixel *pixel = malloc(sizeof(Pixel));
-
-	int width = 
-	int height = 
-
-	for(int y = 0;y<height;y++){
-		for(int x = 0;x<width;x++){
-		pixel 
-		pixel -> x = x;
-		pixel -> y = y;
-
-		drawPixel(pixel);
-		}
-	}
-
 }
 
 /* Draw a pixel */
