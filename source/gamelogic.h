@@ -6,11 +6,12 @@ int isGameEnd(struct gameState *gs);
 struct Tile
 {
 	int valuePack;
-	int isFrogOn;
+	int canStand;
 };
 
 struct gameMap
 {
+	int frogX,frogY;
 	struct Tile **table;	
 };
 
