@@ -26,6 +26,7 @@ struct gameState
 	int quit;
 	int hasWon;
 	int hasLost;
+	int gameStage;
 };
 
 #endif

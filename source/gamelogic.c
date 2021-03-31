@@ -35,6 +35,12 @@ int isGameEnd(struct gameState *gs)
 	return 0;
 }
 
+struct gameState updateGameState(struct gameState *gs, int button)
+{
+
+}
+
+
 struct gameMap initGameMap()
 {
 	struct gameMap map;
@@ -62,5 +68,6 @@ struct gameState initGameState()
 	gs.quit = 0;
 	gs.hasWon = 0;
 	gs.hasLost = 0;
+	gs.gameStage = 0;
 	return gs;
 }
