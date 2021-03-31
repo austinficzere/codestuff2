@@ -26,7 +26,7 @@ int main(){
 
     while(1){
         drawGameState(&prevState,&gs);
-        wait(100000);
+        wait(50000);
         // update gamestate
         setCurrToPrev(&prevState, &gs);
         //updateGameState(&gs, cs -> controllerButton, sTime);

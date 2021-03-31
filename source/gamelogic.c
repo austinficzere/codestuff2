@@ -137,7 +137,7 @@ struct gameMap initGameMap()
 	map.rows = MAP_ROWS;
 	map.cols = MAP_COLS;
 	map.frogX = map.cols/2;
-	map.frogY = map.rows-1;
+	map.frogY = map.rows-2;
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
 			map.table[i][j].valuePack = 0;
