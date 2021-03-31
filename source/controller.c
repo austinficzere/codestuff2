@@ -41,7 +41,6 @@ const char * buttonsArr[] = { "B","Y", "Select", "Start", "Joy-pad UP", "Joy-pad
 const int NONE_PRESSED = 0b1111111111111111;
 const int BTN_PRESSED = 0;
 
-// Defining constant for the start button 
 const int START_BUTTON = 3;
 
 /*
@@ -65,10 +64,8 @@ void  *controller_thread(void *arg)
 
         // Initialzing the button
         int button = NONE_PRESSED;
-	int prevPressed = NONE_PRESSED;
 
 	while(!isButtonPressed(button,START_BUTTON)){
-		prevPressed = button;
         	button = Read_SNES(gpio); // read info from SNES
 		mem -> controllerButton = button;
 		wait(750);

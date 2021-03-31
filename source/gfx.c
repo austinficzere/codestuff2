@@ -1,5 +1,5 @@
 #include "Resources/image.h"
-#include "Resources/frog.c"
+#include "Resources/frogImage32.c"
 #include "Resources/city.c"
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,7 +29,7 @@ struct ValuePacks {
 struct fbs framebufferstruct;
 
 void drawPixel(Pixel *pixel); 
-void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation);
+void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation, int transparent);
 void clearObj(const struct imageStruct *img, int xOff, int yOff);
 void drawBackground(struct Background *bg);
 unsigned short int getPixel(int x, int y);
@@ -43,6 +43,7 @@ int tileToPixel();
 
 const int SCREEN_X = 1280;
 const int SCREEN_Y = 720;
+const int TRANSPARENT = 1;
 
 
 int main(){
@@ -60,8 +61,24 @@ int main(){
 	pthread_create(&controller_id,&attr,controller_thread, (void *) cs);
 
 	struct gameState gs = initGameState();
+	gs.map.frogX = 30;
+	gs.map.frogY = 30;
 	drawBackground(&bg);
+	
 	while(1){
+		wait(70000);
+		if(isButtonPressed(cs -> controllerButton,4)){
+			gs.map.frogY--;
+		}
+		if(isButtonPressed(cs -> controllerButton,5)){
+			gs.map.frogY++;
+		}
+		if(isButtonPressed(cs -> controllerButton,6)){
+			gs.map.frogX--;
+		}
+		if(isButtonPressed(cs -> controllerButton,7)){
+			gs.map.frogX++;
+		}
 		drawGameState(&gs);
 	}
 	
@@ -97,7 +114,7 @@ void drawMap(struct gameMap gm){
 	// Draw frog
 	xOff = tileToPixel(SCREEN_X, gm.cols, gm.frogX);
 	yOff = tileToPixel(SCREEN_Y, gm.rows, gm.frogY);
-	draw((int *)frogImage.image_pixels,frogImage.width,frogImage.height,xOff,yOff, gm.orientation);
+	draw((int *)frogImage32.image_pixels,frogImage32.width,frogImage32.height,xOff,yOff, gm.orientation,TRANSPARENT);
 
 }
 
@@ -127,17 +144,19 @@ int tileToPixel(int totalPixelLength, int totalTileLength, int currVal)
 	return (totalPixelLength/totalTileLength)*currVal;
 }
 
-void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation){
+void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation, int transparent){
 
 		Pixel *pixel = malloc(sizeof(Pixel));
 
 		int i = 0;
 		for(int y = 0; y<height;y++){
 			for(int x = 0;x<width;x++){
-				pixel -> color = pixels[i];
-				pixel -> x = xOff + x;
-				pixel -> y = yOff + y;	
-				drawPixel(pixel);
+				if(!transparent || (transparent && pixels[i]!=0)){
+					pixel -> color = pixels[i];
+					pixel -> x = xOff + x;
+					pixel -> y = yOff + y;	
+					drawPixel(pixel);
+				}
 				i++;
 			}
 		}
@@ -166,7 +185,7 @@ void clearObj(const struct imageStruct *img, int xOff, int yOff){
 
 void drawBackground(struct Background *bg){
 	const struct imageStruct *currBackground = bg -> backgrounds[bg -> currentB];
-	draw((int *)currBackground -> image_pixels, currBackground -> width, currBackground -> height,0,0,0);
+	draw((int *)currBackground -> image_pixels, currBackground -> width, currBackground -> height,0,0,0,!TRANSPARENT);
 }
 
 /* Draw a pixel */

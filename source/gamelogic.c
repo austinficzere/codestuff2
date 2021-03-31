@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "gamelogic.h"
+#include <time.h>
 
 const int NUMB_LIVES = 3;
 const int START_TIME = 300;
@@ -37,7 +38,7 @@ int isGameEnd(struct gameState *gs)
 
 void updateGameState(struct gameState *gs, int button, int startTime)
 {
-	int i = 3
+	int i = 3;
 	while (i < 8)
 	{
 		if ((button & (1<<i)))
