@@ -36,6 +36,11 @@ void clearObj(const struct imageStruct *img, int xOff, int yOff);
 void drawBackground(struct Background *bg);
 void init(Player *player);
 unsigned short int getPixel(int x, int y);
+void drawGameState(struct gameState gs);
+void drawScore();
+void drawTime();
+void drawLives();
+void drawSteps();
 
 const int PLAYER_SPD = 10;
 
@@ -60,27 +65,9 @@ int main(){
 
 	
 	struct gameState gs = initGameState();
+	drawBackground(&bg);
 	while(1){
-
-		draw((int *) frogImage.image_pixels, frogImage.width,frogImage.height, player->x, player->y, player -> orientation);
-		wait(70000);
-		clearObj(&frogImage,player ->x, player->y);
-		if ((cs -> controllerButton) == 0b1111111111101111)
-		{
-			player -> y = (player -> y) - (player-> speed);
-		}
-		else if ((cs -> controllerButton) == 0b1111111111011111)
-		{
-			player -> y = (player -> y) + (player-> speed);
-		}
-		else if ((cs -> controllerButton) == 0b1111111110111111)
-		{
-			player -> x = (player -> x) - (player-> speed);
-		}
-		else if ((cs -> controllerButton) == 0b1111111101111111)
-		{
-			player -> x = (player -> x) + (player-> speed);
-		}
+		drawGameState(gs);
 	}
 	
 	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
@@ -97,6 +84,37 @@ void init(Player *player)
 	player -> orientation = 0;
 	
 }
+
+void drawGameState(struct gameState gs)
+{
+	drawScore();
+	drawTime();
+	drawLives();
+	drawSteps();
+	drawMap(gs -> )
+}
+
+void drawScore(){
+
+}
+
+void drawTime(){
+
+}
+
+void drawLives(){
+
+}
+
+void drawSteps()
+{
+
+}
+
+void drawMenuScreen(){
+
+}
+
 
 
 void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation){
@@ -134,6 +152,11 @@ void clearObj(const struct imageStruct *img, int xOff, int yOff){
 		}
 	}
 	free(pixel);
+}
+
+void drawBackground(struct Background *bg){
+	const struct imageStruct *currBackground = bg -> backgrounds[bg -> currentB];
+	draw((int *)currBackground -> image_pixels, currBackground -> width, currBackground -> height,0,0,0);
 }
 
 /* Draw a pixel */
