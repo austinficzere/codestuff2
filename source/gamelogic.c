@@ -47,16 +47,15 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
+	
+	if ((button & (1<<3)))
+	{
+		gs -> gameStage = -1;
+	}
 
 	int i = 3;
 	while (i < 8)
 	{
-		if ((button & (1<<i)))
-		{
-			gs -> gameStage = -1;
-			break;
-		}
-
 		if ((button & (1<<i)))
 		{
 			if (gs -> map.frogY == 0)
