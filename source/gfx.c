@@ -91,7 +91,15 @@ void drawGameState(struct gameState gs)
 	drawTime();
 	drawLives();
 	drawSteps();
-	drawMap(gs -> )
+	drawMap(gs -> map);
+}
+
+void drawMap(struct gameMap gm){
+	// Loop through each tile and draw any value packs
+
+	
+
+	// Draw frog
 }
 
 void drawScore(){

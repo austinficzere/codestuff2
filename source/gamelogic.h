@@ -11,6 +11,7 @@ struct Tile
 
 struct gameMap
 {
+	int rows,cols;
 	int frogX,frogY;
 	struct Tile **table;	
 };

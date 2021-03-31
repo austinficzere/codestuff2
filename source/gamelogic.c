@@ -39,6 +39,8 @@ struct gameMap initGameMap()
 {
 	struct gameMap map;
 	map.table = createTable(MAP_ROWS,MAP_COLS);
+	map.rows = MAP_ROWS;
+	map.cols = MAP_COLS;
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
 			map.table[i][j].valuePack = 0;
