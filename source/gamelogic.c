@@ -40,6 +40,14 @@ int isGameEnd(struct gameState *gs)
 
 void updateGameState(struct gameState *gs, int button, int startTime)
 {
+	if (gs -> numbLives == 0)
+	{
+		gs -> hasLost = 1;
+		return;
+	}
+
+	// deal with quit, which we check if we are in stage -1, and they press A on correct button
+
 	int i = 3;
 	while (i < 8)
 	{
@@ -56,6 +64,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 				if (gs -> gameStage == 3)
 				{
 					gs -> hasWon = 1;
+					gs -> score = ((gs -> time) + (gs -> movesLeft) + (gs -> numbLives)) * 2;
 					break;
 				}
 				else
@@ -64,6 +73,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 					gs -> map.frogY = MAP_ROWS - 1;
 					gs -> movesLeft--;
 					gs -> time = time(0) - startTime;
+					gs -> score++;
 					break;
 				}
 			}
@@ -72,6 +82,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 				if (i == 4)
 				{
 					gs -> map.frogY--;
+					gs -> score++;
 				}
 				if (i == 5)
 				{
