@@ -37,105 +37,56 @@ int isGameEnd(struct gameState *gs)
 
 void updateGameState(struct gameState *gs, int button, int startTime)
 {
-	if ((button & (1<<3)))
+	int i = 3
+	while (i < 8)
 	{
-		gs -> gameStage = -1;
-	}
-
-	if ((button & (1<<4)))
-	{
-		if (gs -> map.frogY == 0)
+		if ((button & (1<<i)))
 		{
-			if (gs -> gameStage == 3)
+			gs -> gameStage = -1;
+			break;
+		}
+
+		if ((button & (1<<i)))
+		{
+			if (gs -> map.frogY == 0)
 			{
-				gs -> hasWon = 1;
+				if (gs -> gameStage == 3)
+				{
+					gs -> hasWon = 1;
+					break;
+				}
+				else
+				{
+					gs -> gameStage++;
+					gs -> map.frogY = MAP_ROWS - 1;
+					gs -> movesLeft--;
+					gs -> time = time(0) - startTime;
+					break;
+				}
 			}
 			else
 			{
-				gs -> gameStage++;
-				gs -> map.frogY = MAP_ROWS - 1;
+				if (i == 4)
+				{
+					gs -> map.frogY--;
+				}
+				if (i == 5)
+				{
+					gs -> map.frogY++;
+				}
+				if (i == 6)
+				{
+					gs -> map.frogX--;
+				}
+				if (i == 7)
+				{
+					gs -> map.frogX++;
+				}
 				gs -> movesLeft--;
 				gs -> time = time(0) - startTime;
+				break;
 			}
 		}
-		else
-		{
-			gs -> map.frogY--;
-			gs -> movesLeft--;
-			gs -> time = time(0) - startTime;
-		}
-	}
-
-	if ((button & (1<<5)))
-	{
-		if (gs -> map.frogY == 0)
-		{
-			if (gs -> gameStage == 3)
-			{
-				gs -> hasWon = 1;
-			}
-			else
-			{
-				gs -> gameStage++;
-				gs -> map.frogY = MAP_ROWS - 1;
-				gs -> movesLeft--;
-				gs -> time = time(0) - startTime;
-			}
-		}
-		else
-		{
-			gs -> map.frogY++;
-			gs -> movesLeft--;
-			gs -> time = time(0) - startTime;
-		}
-	}
-
-	if ((button & (1<<6)))
-	{
-		if (gs -> map.frogY == 0)
-		{
-			if (gs -> gameStage == 3)
-			{
-				gs -> hasWon = 1;
-			}
-			else
-			{
-				gs -> gameStage++;
-				gs -> map.frogY = MAP_ROWS - 1;
-				gs -> movesLeft--;
-				gs -> time = time(0) - startTime;
-			}
-		}
-		else
-		{
-			gs -> map.frogX--;
-			gs -> movesLeft--;
-			gs -> time = time(0) - startTime;
-		}
-	}
-
-	if ((button & (1<<7)))
-	{
-		if (gs -> map.frogY == 0)
-		{
-			if (gs -> gameStage == 3)
-			{
-				gs -> hasWon = 1;
-			}
-			else
-			{
-				gs -> gameStage++;
-				gs -> map.frogY = MAP_ROWS - 1;
-				gs -> movesLeft--;
-				gs -> time = time(0) - startTime;
-			}
-		}
-		else
-		{
-			gs -> map.frogX++;
-			gs -> movesLeft--;
-			gs -> time = time(0) - startTime;
-		};
 	}
 }
 
