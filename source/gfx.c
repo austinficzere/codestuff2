@@ -16,17 +16,15 @@ typedef struct {
 	int x, y;
 } Pixel;
 
-typedef struct {
-	int x,y;
-	int speed;
-	int orientation;
-} Player;
-
 struct Background {
 	// arrray of background
 	const struct imageStruct *backgrounds[4];
 	int currentB;
 } bg = {{&cityImage, NULL, NULL, NULL}, 0};
+
+struct ValuePacks {
+	const struct imageStruct *vp[8]
+} vPacks = {{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
 
 struct fbs framebufferstruct;
 
@@ -34,25 +32,23 @@ void drawPixel(Pixel *pixel);
 void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation);
 void clearObj(const struct imageStruct *img, int xOff, int yOff);
 void drawBackground(struct Background *bg);
-void init(Player *player);
 unsigned short int getPixel(int x, int y);
-void drawGameState(struct gameState gs);
+void drawGameState(struct gameState *gs);
 void drawScore();
 void drawTime();
 void drawLives();
 void drawSteps();
+void drawMap(struct gameMap gm);
+int tileToPixel();
 
-const int PLAYER_SPD = 10;
+const int SCREEN_X = 1280;
+const int SCREEN_Y = 720;
 
 
 int main(){
 
 	/* initialize + get FBS */
 	framebufferstruct = initFbInfo();
-	
-	Player *player = malloc(sizeof(Player));
-	
-	init(player);
 
 	struct ControllerStruct *cs;
 	cs = malloc(sizeof(struct ControllerStruct));
@@ -63,11 +59,10 @@ int main(){
 
 	pthread_create(&controller_id,&attr,controller_thread, (void *) cs);
 
-	
 	struct gameState gs = initGameState();
 	drawBackground(&bg);
 	while(1){
-		drawGameState(gs);
+		drawGameState(&gs);
 	}
 	
 	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
@@ -75,17 +70,7 @@ int main(){
 	return 0;
 }
 
-
-void init(Player *player)
-{
-	player -> x = 30;
-	player -> y = 30;
-	player -> speed = PLAYER_SPD;
-	player -> orientation = 0;
-	
-}
-
-void drawGameState(struct gameState gs)
+void drawGameState(struct gameState *gs)
 {
 	drawScore();
 	drawTime();
@@ -97,9 +82,23 @@ void drawGameState(struct gameState gs)
 void drawMap(struct gameMap gm){
 	// Loop through each tile and draw any value packs
 
-	
+	int xOff,yOff;
+	for(int i = 0;i<gm.rows;i++){
+		for(int j = 0;j<gm.cols;j++){
+			xOff = tileToPixel(SCREEN_X, gm.cols, j);
+			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
+
+			if(gm.table[i][j].valuePack != 0){
+				//draw image
+			}
+		}
+	}
 
 	// Draw frog
+	xOff = tileToPixel(SCREEN_X, gm.cols, gm.frogX);
+	yOff = tileToPixel(SCREEN_Y, gm.rows, gm.frogY);
+	draw((int *)frogImage.image_pixels,frogImage.width,frogImage.height,xOff,yOff, gm.orientation);
+
 }
 
 void drawScore(){
@@ -123,7 +122,10 @@ void drawMenuScreen(){
 
 }
 
-
+int tileToPixel(int totalPixelLength, int totalTileLength, int currVal)
+{
+	return (totalPixelLength/totalTileLength)*currVal;
+}
 
 void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation){
 

@@ -50,7 +50,6 @@ struct gameMap initGameMap()
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
 			map.table[i][j].valuePack = 0;
-			map.table[i][j].isFrogOn = 0;
 		}
 	}
 

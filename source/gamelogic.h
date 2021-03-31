@@ -12,6 +12,7 @@ struct Tile
 struct gameMap
 {
 	int rows,cols;
+	int orientation;
 	int frogX,frogY;
 	struct Tile **table;	
 };
@@ -19,6 +20,7 @@ struct gameMap
 struct gameState
 {
 	struct gameMap map;
+
 	int score;
 	int numbLives;
 	int time;
