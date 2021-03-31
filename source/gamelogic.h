@@ -2,6 +2,7 @@
 #define LOGIC_H_INCLUDED
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
+void setCurrToPrev(struct gameState *prev, struct gameState *curr);
 
 struct Tile
 {

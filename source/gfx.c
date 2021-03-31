@@ -6,9 +6,6 @@
 #include <sys/mman.h>
 #include "framebuffer.h"
 #include <unistd.h>
-#include "controller.h"
-#include <pthread.h>
-#include "global.h"
 #include "gamelogic.h"
 
 typedef struct {
@@ -33,73 +30,41 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 void clearObj(const struct imageStruct *img, const struct imageStruct *rplc, int xOff, int yOff);
 void drawBackground(struct Background *bg);
 unsigned short int getPixel(int x, int y);
-void drawGameState(struct gameState *gs);
+void drawGameState(struct gameState *prevState,struct gameState *gs);
 void drawScore();
 void drawTime();
 void drawLives();
 void drawSteps();
-void drawMap(struct gameMap gm);
+void drawMap(struct gameMap prevMap, struct gameMap gm);
 int tileToPixel();
+void initGFX();
 
 const int SCREEN_X = 1280;
 const int SCREEN_Y = 720;
 const int TRANSPARENT = 1;
 
+//munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
 
-int main(){
-
-	/* initialize + get FBS */
+void initGFX(){
 	framebufferstruct = initFbInfo();
-
-	struct ControllerStruct *cs;
-	cs = malloc(sizeof(struct ControllerStruct));
-
-	pthread_t controller_id;
-	pthread_attr_t attr;
-	pthread_attr_init(&attr);
-
-	pthread_create(&controller_id,&attr,controller_thread, (void *) cs);
-
-	struct gameState gs = initGameState();
-	gs.map.frogX = 15;
-	gs.map.frogY = 15;
 	drawBackground(&bg);
-	
-	while(1){
-		drawGameState(&gs);
-		wait(70000);
-		int xOff = tileToPixel(SCREEN_X, gs.map.cols, gs.map.frogX);
-		int yOff = tileToPixel(SCREEN_Y, gs.map.rows, gs.map.frogY);
-		if(isButtonPressed(cs -> controllerButton,4)){
-			gs.map.frogY--;
-		}
-		if(isButtonPressed(cs -> controllerButton,5)){
-			gs.map.frogY++;
-		}
-		if(isButtonPressed(cs -> controllerButton,6)){
-			gs.map.frogX--;
-		}
-		if(isButtonPressed(cs -> controllerButton,7)){
-			gs.map.frogX++;
-		}
-		clearObj(&frogImage32,&cityImage,xOff,yOff);
-	}
-	
-	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
-	
-	return 0;
 }
 
-void drawGameState(struct gameState *gs)
+void drawGameState(struct gameState *prevState,struct gameState *gs)
 {
-	drawScore();
-	drawTime();
-	drawLives();
-	drawSteps();
-	drawMap(gs -> map);
+	if(prevState -> score != gs -> score)
+		drawScore();
+	if(prevState -> time != gs -> time)
+		drawTime();
+	if(prevState -> numbLives != gs -> numbLives)
+		drawLives();
+	if(prevState -> movesLeft != gs -> movesLeft)
+		drawSteps();
+
+	drawMap(prevState -> map, gs -> map);
 }
 
-void drawMap(struct gameMap gm){
+void drawMap(struct gameMap prevMap, struct gameMap gm){
 	// Loop through each tile and draw any value packs
 
 	int xOff,yOff;
@@ -109,15 +74,28 @@ void drawMap(struct gameMap gm){
 			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
 
 			if(gm.table[i][j].valuePack != 0){
-				//draw image
+				if(prevMap.table[i][j].valuePack != gm.table[i][j].valuePack){
+					// clear previous value
+
+					// Draw current 
+				}
 			}
 		}
 	}
 
 	// Draw frog
-	xOff = tileToPixel(SCREEN_X, gm.cols, gm.frogX);
-	yOff = tileToPixel(SCREEN_Y, gm.rows, gm.frogY);
-	draw((int *)frogImage32.image_pixels,frogImage32.width,frogImage32.height,xOff,yOff, gm.orientation,TRANSPARENT);
+	if((prevMap.frogX != gm.frogX) || (prevMap.frogY != gm.frogY)){
+		// clear 
+		xOff = tileToPixel(SCREEN_X, prevMap.cols, prevMap.frogX);
+		yOff = tileToPixel(SCREEN_Y, prevMap.rows, prevMap.frogY);
+
+		clearObj(&frogImage32,&cityImage,xOff,yOff);
+
+		// Drawing current frog
+		xOff = tileToPixel(SCREEN_X, gm.cols, gm.frogX);
+		yOff = tileToPixel(SCREEN_Y, gm.rows, gm.frogY);
+		draw((int *)frogImage32.image_pixels,frogImage32.width,frogImage32.height,xOff,yOff, gm.orientation,TRANSPARENT);
+	}
 
 }
 
@@ -150,9 +128,6 @@ int tileToPixel(int totalPixelLength, int totalTileLength, int currVal)
 void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation, int transparent){
 
 		Pixel *pixel = malloc(sizeof(Pixel));
-		
-
-
 		int i = 0;
 		for(int y = 0; y<height;y++){
 			for(int x = 0;x<width;x++){

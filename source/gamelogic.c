@@ -13,6 +13,8 @@ const int MAP_COLS = 30;
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
 
+void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr);
+
 
 struct Tile **createTable(int rows, int cols)
 {
@@ -91,6 +93,31 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 }
 
+void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
+	prev -> frogX = curr -> frogX;
+	prev -> frogY = curr -> frogY;
+	prev -> orientation = curr -> orientation;
+
+	for(int i = 0;i<MAP_ROWS;i++){
+		for(int j = 0;j<MAP_COLS;j++){
+			prev -> table[i][j] = curr -> table[i][j];
+		}
+	}
+}
+
+void setCurrToPrev(struct gameState *prev, struct gameState *curr){
+
+	setCurrToPrevMap(&(prev -> map), &(curr -> map));
+	prev -> score = curr -> score;
+	prev -> numbLives = curr -> numbLives;
+	prev -> time = curr -> time;
+	prev -> movesLeft = curr -> movesLeft;
+	prev -> quit = curr -> quit;
+	prev -> hasWon = curr -> hasWon;
+	prev -> hasLost = curr -> hasLost;
+	prev -> gameStage = curr -> gameStage;
+
+}
 
 struct gameMap initGameMap()
 {
@@ -98,6 +125,8 @@ struct gameMap initGameMap()
 	map.table = createTable(MAP_ROWS,MAP_COLS);
 	map.rows = MAP_ROWS;
 	map.cols = MAP_COLS;
+	map.frogX = map.cols/2;
+	map.frogY = map.rows-1;
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
 			map.table[i][j].valuePack = 0;
