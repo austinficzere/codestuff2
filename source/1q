@@ -61,15 +61,13 @@ int main(){
 	pthread_create(&controller_id,&attr,controller_thread, (void *) cs);
 
 	struct gameState gs = initGameState();
-	gs.map.frogX = 15;
-	gs.map.frogY = 15;
+	gs.map.frogX = 30;
+	gs.map.frogY = 30;
 	drawBackground(&bg);
 	
 	while(1){
 		drawGameState(&gs);
 		wait(70000);
-		int xOff = tileToPixel(SCREEN_X, gs.map.cols, gs.map.frogX);
-		int yOff = tileToPixel(SCREEN_Y, gs.map.rows, gs.map.frogY);
 		if(isButtonPressed(cs -> controllerButton,4)){
 			gs.map.frogY--;
 		}
@@ -82,7 +80,7 @@ int main(){
 		if(isButtonPressed(cs -> controllerButton,7)){
 			gs.map.frogX++;
 		}
-		clearObj(&frogImage32,&cityImage,xOff,yOff);
+		//clearObj(,)
 	}
 	
 	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
@@ -175,20 +173,19 @@ void clearObj(const struct imageStruct *img, const struct imageStruct *rplc,int 
 	int width = img -> width;
 	int height = img -> height;
 
-	int *pixels = (int *) rplc -> image_pixels;
+	int i = yOff * (rplc -> width) + xOff;
 
-	int i;
 
 	for(int y = 0; y<height;y++){
 		for(int x = 0;x<width;x++){
 		// replace image with previous item
-		i = (rplc -> width ) * (yOff+y) + (xOff+x);
 		pixel -> color = pixels[i];
 		pixel -> x = xOff + x;
 		pixel -> y = yOff + y;
 
 		drawPixel(pixel);
 
+		i++;
 		}
 	}
 	free(pixel);
