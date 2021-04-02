@@ -1,6 +1,7 @@
 #include "Resources/image.h"
 #include "Resources/frogImage32.c"
 #include "Resources/city.c"
+#include "Resources/bus.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -129,6 +130,7 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 
 		Pixel *pixel = malloc(sizeof(Pixel));
 		int i = 0;
+
 		for(int y = 0; y<height;y++){
 			for(int x = 0;x<width;x++){
 				if(!transparent || (transparent && pixels[i]!=0)){

@@ -11,6 +11,14 @@ struct Tile
 	int canStand;
 };
 
+struct harmObject
+{
+	int drawX,drawY;
+	int speed;
+	int orientation;
+	const struct imageStruct img;
+};
+
 struct gameMap
 {
 	int rows,cols;
