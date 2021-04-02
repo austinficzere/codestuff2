@@ -36,6 +36,8 @@ void drawScore();
 void drawTime();
 void drawLives();
 void drawSteps();
+void drawMenuScreen();
+void drawPauseScreen();
 void drawMap(struct gameMap prevMap, struct gameMap gm);
 int tileToPixel();
 void initGFX();
@@ -119,6 +121,10 @@ void drawSteps()
 
 void drawMenuScreen(){
 
+}
+
+void drawPauseScreen(){
+	
 }
 
 int tileToPixel(int totalPixelLength, int totalTileLength, int currVal)
