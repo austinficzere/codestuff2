@@ -1,3 +1,5 @@
+#include "Resources/image.h"
+
 #ifndef LOGIC_H_INCLUDED
 #define LOGIC_H_INCLUDED
 struct gameState initGameState();
@@ -24,6 +26,7 @@ struct gameMap
 	int rows,cols;
 	int orientation;
 	int frogX,frogY;
+	struct harmObject *hObjs;
 	struct Tile **table;	
 };
 

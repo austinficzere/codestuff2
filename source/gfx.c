@@ -59,6 +59,7 @@ const int TRANSPARENT = 1;
 void initGFX(){
 	framebufferstruct = initFbInfo();
 	drawBackground(&bg);
+	draw((int *) busImage.image_pixels,busImage.width,busImage.height,100,100,1,TRANSPARENT);
 }
 
 void drawGameState(struct gameState *prevState,struct gameState *gs)
@@ -147,6 +148,51 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 		Pixel *pixel = malloc(sizeof(Pixel));
 		int i = 0;
 
+		int xSet,xEnd,incX;
+		int ySet,yEnd,incY;
+
+		int flip = 0;
+
+		if(orientation == 0){
+			xSet = ySet = 0;
+			incX = incY = 1;
+
+			xEnd = width;
+			yEnd = height;
+
+		}
+		else if(orientation == 1){
+			//
+		}
+		else if(orientation == 2){
+			xSet = width - 1;
+			ySet = height - 1;
+
+			incX = incY = -1;
+
+			yEnd = xEnd = -1;
+		}
+		else{
+			///
+		}
+
+		int y = ySet;
+		while(y!=yEnd){
+			int x = xSet;
+			while(x!=xEnd){
+				if(!transparent || (transparent && pixels[i]!=0)){
+					pixel -> color = pixels[i];
+					pixel -> x = xOff + x;
+					pixel -> y = yOff + y;	
+					drawPixel(pixel);
+				}
+				i++;
+				x += incX;
+			}
+			y += incY;
+		}
+
+		/*
 		for(int y = 0; y<height;y++){
 			for(int x = 0;x<width;x++){
 				if(!transparent || (transparent && pixels[i]!=0)){
@@ -158,6 +204,7 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 				i++;
 			}
 		}
+		*/
 		
 		free(pixel);
 }
