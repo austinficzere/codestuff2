@@ -42,7 +42,18 @@ const char * buttonsArr[] = { "B","Y", "Select", "Start", "Joy-pad UP", "Joy-pad
 const int BTN_PRESSED = 0;
 const int NONE_PRESSED = 0b1111111111111111;
 
+const int B_BUTTON = 0;
+const int Y_BUTTON = 1;
+const int SELECT_BUTTON = 2;
 const int START_BUTTON = 3;
+const int UP_BUTTON = 4;
+const int DOWN_BUTTON = 5;
+const int LEFT_BUTTON = 6;
+const int RIGHT_BUTTON = 7;
+const int A_BUTTON = 8;
+const int X_BUTTON = 9;
+const int LEFT_BUMPER = 10;
+const int RIGHT_BUMPER = 11;
 
 /*
 @Params: none

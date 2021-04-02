@@ -2,6 +2,7 @@
 #include "Resources/frogImage32.c"
 #include "Resources/city.c"
 #include "Resources/bus.c"
+#include "Resources/pauseMenu.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -20,14 +21,6 @@ struct Background {
 	int currentB;
 } bg = {{&cityImage, NULL, NULL, NULL}, 0};
 
-struct PauseScreen {
-	const struct imageStruct *pausescreen;
-} ps;
-
-struct MenuScreen {
-	const struct imageStruct *menuscreen;
-} ms = {&/* name of image*/};
-
 struct ValuePacks {
 	const struct imageStruct *vp[8]
 } vPacks = {{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
@@ -44,8 +37,8 @@ void drawScore();
 void drawTime();
 void drawLives();
 void drawSteps();
-void drawMenuScreen(struct MenuScreen *ms);
-void drawPauseScreen(struct PauseScreen *ps);
+//void drawMenuScreen(struct MenuScreen *ms);
+void drawPauseScreen();
 void drawMap(struct gameMap prevMap, struct gameMap gm);
 int tileToPixel();
 void initGFX();
@@ -59,7 +52,6 @@ const int TRANSPARENT = 1;
 void initGFX(){
 	framebufferstruct = initFbInfo();
 	drawBackground(&bg);
-	draw((int *) busImage.image_pixels,busImage.width,busImage.height,100,100,0,TRANSPARENT);
 }
 
 void drawGameState(struct gameState *prevState,struct gameState *gs)
@@ -128,14 +120,14 @@ void drawSteps()
 
 }
 
-void drawMenuScreen(struct MenuScreen *ms){
-	const struct imageStruct *menuScreen = ms -> menuscreen;
-	draw((int *)menuScreen -> image_pixels, menuScreen -> width, menuScreen -> height,0,0,0,!TRANSPARENT);
-}
+//void drawMenuScreen(struct MenuScreen *ms){
+//	draw((int *)menuScreenImage.image_pixels, menuScreenImage.width, menuScreenImage.height,0,0,0,!TRANSPARENT);
+//}
 
-void drawPauseScreen(struct PauseScreen *ps){
-	const struct imageStruct *pauseScreen = ps -> pausescreen;
-	draw((int *)pauseScreen -> image_pixels, pauseScreen -> width, pauseScreen -> height,0,0,0,!TRANSPARENT);
+void drawPauseScreen(){
+	int xOff = (SCREEN_X/2) - (pauseMenuImage.width/2);
+	int yOff = (SCREEN_Y/2) - (pauseMenuImage.height/2);
+	draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
 }
 
 int tileToPixel(int totalPixelLength, int totalTileLength, int currVal)
@@ -148,30 +140,48 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 		Pixel *pixel = malloc(sizeof(Pixel));
 		int i = 0;
 
-		int xSet,xEnd,incX;
-		int ySet,yEnd,incY;
-
-		if(orientation == 0 || orientation == 1 || orientation == 3){
+		int xSet,xEnd,xInc;
+		int ySet,yEnd,yInc;
+	
+		int flip = 0;
+		
+		if(orientation == 0){
 			xSet = ySet = 0;
-			incX = incY = 1;
+			xInc = yInc = 1;
 
 			xEnd = width;
 			yEnd = height;
 
 		}
 		else if(orientation == 1){
-			//TODO
+			flip = 1;
+
+			ySet = height-1;
+			yEnd = -1;
+			yInc = -1;
+
+			xSet = 0;
+			xEnd = width;
+			xInc = 1;
 		}
 		else if(orientation == 2){
 			xSet = width - 1;
 			ySet = height - 1;
 
-			incX = incY = -1;
+			xInc = yInc = -1;
 
 			yEnd = xEnd = -1;
 		}
 		else{
-			// TODO
+			flip = 1;
+
+			ySet = 0;
+			yEnd = height;
+			yInc = 1;
+
+			xSet = width -1;
+			xEnd = -1;
+			xInc = -1;
 		}
 
 		int y = ySet;
@@ -180,14 +190,14 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 			while(x!=xEnd){
 				if(!transparent || (transparent && pixels[i]!=0)){
 					pixel -> color = pixels[i];
-					pixel -> x = xOff + x;
-					pixel -> y = yOff + y;	
+					pixel -> x = xOff + (flip ? y : x);
+					pixel -> y = yOff + (flip ? x : y);	
 					drawPixel(pixel);
 				}
 				i++;
-				x += incX;
+				x += xInc;
 			}
-			y += incY;
+			y += yInc;
 		}
 
 		/*

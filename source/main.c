@@ -24,7 +24,7 @@ int main(){
 
     initGFX();
 
-    while(1){
+    while(!gs.quit){
         drawGameState(&prevState,&gs);
         wait(70000);
         // update gamestate
