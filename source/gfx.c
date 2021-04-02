@@ -24,6 +24,10 @@ struct PauseScreen {
 	const struct imageStruct *pausescreen;
 } ps = {&/* name of image*/};
 
+struct MenuScreen {
+	const struct imageStruct *menuscreen;
+} ms = {&/* name of image*/};
+
 struct ValuePacks {
 	const struct imageStruct *vp[8]
 } vPacks = {{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
@@ -40,8 +44,8 @@ void drawScore();
 void drawTime();
 void drawLives();
 void drawSteps();
-void drawMenuScreen();
-void drawPauseScreen();
+void drawMenuScreen(struct MenuScreen *ms);
+void drawPauseScreen(struct PauseScreen *ps);
 void drawMap(struct gameMap prevMap, struct gameMap gm);
 int tileToPixel();
 void initGFX();
@@ -123,8 +127,9 @@ void drawSteps()
 
 }
 
-void drawMenuScreen(){
-
+void drawMenuScreen(struct MenuScreen *ms){
+	const struct imageStruct *menuScreen = ms -> menuscreen;
+	draw((int *)menuScreen -> image_pixels, menuScreen -> width, menuScreen -> height,0,0,0,!TRANSPARENT);
 }
 
 void drawPauseScreen(struct PauseScreen *ps){
