@@ -3,6 +3,7 @@
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
 void setCurrToPrev(struct gameState *prev, struct gameState *curr);
+void updateGameState(struct gameState *gs, int button, int startTime);
 
 struct Tile
 {

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "gamelogic.h"
 #include <time.h>
+#include "controller.h"
 
 const int NUMB_LIVES = 3;
 const int START_TIME = 300;
@@ -48,59 +49,53 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
 	
-	if ((button & (1<<3)))
+	if (isButtonPressed(button,3))
 	{
 		gs -> gameStage = -1;
+		return;
 	}
 
-	int i = 3;
-	while (i < 8)
-	{
-		if ((button & (1<<i)))
+	if(button!=NONE_PRESSED){
+		if (isButtonPressed(button,4) && gs -> map.frogY>0)
 		{
-			if (gs -> map.frogY == 0)
+			gs -> map.frogY--;
+			gs -> movesLeft--;
+		}
+		if (isButtonPressed(button,5) && gs -> map.frogY<MAP_ROWS-1)
+		{
+			gs -> map.frogY++;
+			gs -> movesLeft--;
+		}
+		if (isButtonPressed(button,6) && gs -> map.frogX>0)
+		{
+			gs -> map.frogX--;
+			gs -> movesLeft--;
+		}
+		if (isButtonPressed(button,7) && gs -> map.frogX<MAP_COLS)
+		{
+			gs -> map.frogX++;
+			gs -> movesLeft--;
+		}
+	}
+
+	if (gs -> map.frogY == 0)
+	{
+		if (gs -> gameStage == 3)
 			{
-				if (gs -> gameStage == 3)
-				{
-					gs -> hasWon = 1;
-					gs -> score = ((gs -> time) + (gs -> movesLeft) + (gs -> numbLives)) * 2;
-					break;
-				}
-				else
-				{
-					gs -> gameStage++;
-					gs -> map.frogY = MAP_ROWS - 1;
-					gs -> movesLeft--;
-					gs -> time = time(0) - startTime;
-					gs -> score++;
-					break;
-				}
+				gs -> hasWon = 1;
+				gs -> score = ((gs -> time) + (gs -> movesLeft) + (gs -> numbLives)) * 2;
 			}
 			else
 			{
-				if (i == 4)
-				{
-					gs -> map.frogY--;
-					gs -> score++;
-				}
-				if (i == 5)
-				{
-					gs -> map.frogY++;
-				}
-				if (i == 6)
-				{
-					gs -> map.frogX--;
-				}
-				if (i == 7)
-				{
-					gs -> map.frogX++;
-				}
+				gs -> gameStage++;
+				gs -> map.frogY = MAP_ROWS - 1;
 				gs -> movesLeft--;
-				gs -> time = time(0) - startTime;
-				break;
+				gs -> score++;
 			}
-		}
 	}
+
+	gs -> time = time(0) - startTime;
+
 }
 
 void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){

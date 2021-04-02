@@ -26,22 +26,10 @@ int main(){
 
     while(1){
         drawGameState(&prevState,&gs);
-        wait(50000);
+        wait(70000);
         // update gamestate
         setCurrToPrev(&prevState, &gs);
-        //updateGameState(&gs, cs -> controllerButton, sTime);
-        if(isButtonPressed(cs -> controllerButton,4)){
-			gs.map.frogY--;
-		}
-		if(isButtonPressed(cs -> controllerButton,5)){
-			gs.map.frogY++;
-		}
-		if(isButtonPressed(cs -> controllerButton,6)){
-			gs.map.frogX--;
-		}
-		if(isButtonPressed(cs -> controllerButton,7)){
-			gs.map.frogX++;
-		}
+       	updateGameState(&gs, cs -> controllerButton, sTime);
         // Change prev and current
     }
 

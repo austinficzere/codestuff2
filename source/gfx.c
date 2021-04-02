@@ -158,7 +158,7 @@ void clearObj(const struct imageStruct *img, const struct imageStruct *rplc,int 
 		for(int x = 0;x<width;x++){
 		// replace image with previous item
 		i = (rplc -> width ) * (yOff+y) + (xOff+x);
-		pixel -> color = pixels[i];
+		pixel -> color = i< (rplc -> width * rplc -> height) ? pixels[i] : 0x0;
 		pixel -> x = xOff + x;
 		pixel -> y = yOff + y;
 

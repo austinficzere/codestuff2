@@ -13,6 +13,7 @@
 #include "initGPIO.h"
 #include <pthread.h>
 #include "global.h"
+#include "controller.h"
 
 #define GPIO_SET_OFF 7          // 28/4
 #define GPIO_CLEAR_OFF 10       // 40/4
@@ -38,8 +39,8 @@ void *controler(void *arg);
 const char * buttonsArr[] = { "B","Y", "Select", "Start", "Joy-pad UP", "Joy-pad DOWN", "Joy-pad LEFT", "Joy-pad RIGHT", "A", "X", "Left", "Right"};
 
 // defining constants to know when buttons are pressed or none are pressed
-const int NONE_PRESSED = 0b1111111111111111;
 const int BTN_PRESSED = 0;
+const int NONE_PRESSED = 0b1111111111111111;
 
 const int START_BUTTON = 3;
 
