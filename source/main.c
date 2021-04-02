@@ -31,6 +31,13 @@ int main(){
         // update gamestate
         setCurrToPrev(&prevState, &gs);
        	updateGameState(&gs, cs -> controllerButton, sTime);
+        
+        while (gs.gameStage == -1)
+        {
+            // drawPauseScreen();
+            // update gamestate
+        }
+
         // Change prev and current
     }
 
