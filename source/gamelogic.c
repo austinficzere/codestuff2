@@ -10,6 +10,7 @@ const int START_TIME = 300;
 const int NUMB_MOVES = 100;
 const int MAP_ROWS = 30;
 const int MAP_COLS = 30;
+const int H_OBJ = 15;
 
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
@@ -124,10 +125,18 @@ void setCurrToPrev(struct gameState *prev, struct gameState *curr){
 
 }
 
+void initHarmObjects(struct harmObject *hObjs){
+
+}
+
 struct gameMap initGameMap()
 {
 	struct gameMap map;
 	map.table = createTable(MAP_ROWS,MAP_COLS);
+
+	//map.hObjs = malloc(H_OBJ * sizeof(struct harmObject));
+	//initHarmObjects(map.hObjs);
+
 	map.rows = MAP_ROWS;
 	map.cols = MAP_COLS;
 	map.frogX = map.cols/2;
