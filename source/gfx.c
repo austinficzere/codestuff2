@@ -22,7 +22,7 @@ struct Background {
 
 struct PauseScreen {
 	const struct imageStruct *pausescreen;
-} ps = {&/* name of image*/};
+} ps;
 
 struct ValuePacks {
 	const struct imageStruct *vp[8]
@@ -55,7 +55,7 @@ const int TRANSPARENT = 1;
 void initGFX(){
 	framebufferstruct = initFbInfo();
 	drawBackground(&bg);
-	draw((int *) busImage.image_pixels,busImage.width,busImage.height,100,100,1,TRANSPARENT);
+	draw((int *) busImage.image_pixels,busImage.width,busImage.height,100,100,0,TRANSPARENT);
 }
 
 void drawGameState(struct gameState *prevState,struct gameState *gs)
@@ -146,9 +146,7 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 		int xSet,xEnd,incX;
 		int ySet,yEnd,incY;
 
-		int flip = 0;
-
-		if(orientation == 0){
+		if(orientation == 0 || orientation == 1 || orientation == 3){
 			xSet = ySet = 0;
 			incX = incY = 1;
 
@@ -157,7 +155,7 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 
 		}
 		else if(orientation == 1){
-			//
+			//TODO
 		}
 		else if(orientation == 2){
 			xSet = width - 1;
@@ -168,7 +166,7 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 			yEnd = xEnd = -1;
 		}
 		else{
-			///
+			// TODO
 		}
 
 		int y = ySet;

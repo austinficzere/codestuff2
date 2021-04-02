@@ -23,7 +23,6 @@ int main(){
     prevState.map.frogX = 0;
 
     initGFX();
-    return 1;
 
     while(1){
         drawGameState(&prevState,&gs);

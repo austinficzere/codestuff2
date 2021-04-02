@@ -59,21 +59,25 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	if(button!=NONE_PRESSED){
 		if (isButtonPressed(button,4) && gs -> map.frogY>0)
 		{
+			gs -> map.orientation = 0;
 			gs -> map.frogY--;
 			gs -> movesLeft--;
 		}
 		if (isButtonPressed(button,5) && gs -> map.frogY<MAP_ROWS-1)
 		{
+			gs -> map.orientation = 2;
 			gs -> map.frogY++;
 			gs -> movesLeft--;
 		}
 		if (isButtonPressed(button,6) && gs -> map.frogX>0)
 		{
+			gs -> map.orientation = 1;
 			gs -> map.frogX--;
 			gs -> movesLeft--;
 		}
 		if (isButtonPressed(button,7) && gs -> map.frogX<MAP_COLS)
 		{
+			gs -> map.orientation = 3;
 			gs -> map.frogX++;
 			gs -> movesLeft--;
 		}
@@ -141,6 +145,7 @@ struct gameMap initGameMap()
 	map.cols = MAP_COLS;
 	map.frogX = map.cols/2;
 	map.frogY = map.rows-2;
+	map.orientation = 0;
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
 			map.table[i][j].valuePack = 0;
