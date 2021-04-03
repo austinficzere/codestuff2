@@ -4,6 +4,8 @@
 #include "gamelogic.h"
 #include <time.h>
 #include "controller.h"
+#include "global.h"
+#include "gfx.h"
 
 const int NUMB_LIVES = 3;
 const int START_TIME = 300;
@@ -16,6 +18,7 @@ struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
 
 void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr);
+void updateHarmObjects(struct gameMap gm);
 
 
 struct Tile **createTable(int rows, int cols)
@@ -26,8 +29,17 @@ struct Tile **createTable(int rows, int cols)
 		table[i] = (struct Tile *) malloc(cols * sizeof(struct Tile));
 	}
 	return table;
-
 }
+
+
+struct Tile copyTile(struct Tile tc){
+	struct Tile ret;
+	ret.valuePack = tc.valuePack;
+	ret.canStand = tc.canStand;
+
+	return ret;
+}
+
 
 int isGameEnd(struct gameState *gs)
 {
@@ -49,7 +61,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
-	
+	updateHarmObjects(gs -> map);
 	if (isButtonPressed(button,START_BUTTON))
 	{
 		gs -> gameStage = -1;
@@ -83,6 +95,14 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		}
 	}
 
+	// Check collision with harm object
+	/*
+	if(collides){
+		gs -> numbLives--;
+		gs -> map.frogX = map.cols/2;
+		gs -> map.frogY = map.rows-2;
+	}*/
+
 	if (gs -> map.frogY == 0)
 	{
 		if (gs -> gameStage == 3)
@@ -110,10 +130,13 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
 
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
-			//STRUCT 
-			//FIX
-			prev -> table[i][j] = curr -> table[i][j];
+			prev -> table[i][j] = copyTile(curr -> table[i][j]);
 		}
+	}
+
+	for(int i = 0;i<curr -> numbOfHarm;i++){
+		prev -> hObjs[i].drawX = curr -> hObjs[i].drawX;
+		prev -> hObjs[i].drawY = curr -> hObjs[i].drawY;
 	}
 }
 
@@ -131,8 +154,23 @@ void setCurrToPrev(struct gameState *prev, struct gameState *curr){
 
 }
 
-void initHarmObjects(struct harmObject *hObjs){
-	
+int randomNumb(int lowerBound, int upperBound){
+	return (rand() % (upperBound-lowerBound+1)) +lowerBound;
+}
+
+void initHarmObjects(struct harmObject *hObjs, int numbOfHarm){
+	for(int i = 0;i<numbOfHarm;i++){
+		hObjs[i].img = &busImage;
+		hObjs[i].speed = randomNumb(1,20);
+		hObjs[i].drawY = randomNumb(0,SCREEN_Y);
+		hObjs[i].orientation = (randomNumb(0,1) ? 0 : 2);
+		if(hObjs[i].orientation == 2){
+			hObjs[i].speed = -(hObjs[i].speed);
+			hObjs[i].drawX = SCREEN_X-(hObjs[i].img -> width);
+		}else{
+			hObjs[i].drawX = 0;
+		}
+	}	
 }
 
 struct gameMap initGameMap()
@@ -141,8 +179,9 @@ struct gameMap initGameMap()
 	map.table = createTable(MAP_ROWS,MAP_COLS);
 
 	map.hObjs = malloc(H_OBJ * sizeof(struct harmObject));
-	initHarmObjects(map.hObjs);
-
+	initHarmObjects(map.hObjs,H_OBJ);
+	map.numbOfHarm = H_OBJ;
+		
 	map.rows = MAP_ROWS;
 	map.cols = MAP_COLS;
 	map.frogX = map.cols/2;
@@ -170,4 +209,20 @@ struct gameState initGameState()
 	gs.hasLost = 0;
 	gs.gameStage = 0;
 	return gs;
+}
+
+void updateHarmObjects(struct gameMap gm){
+	for(int i = 0;i<gm.numbOfHarm;i++){
+		gm.hObjs[i].drawX = gm.hObjs[i].drawX + gm.hObjs[i].speed;
+	}
+}
+
+void  *harm_obj_thread(void *arg){
+	struct harmObject *obj = (struct harmObject *)arg;
+	while(1){
+		obj -> drawX = obj -> drawX + obj -> speed;
+		if(obj -> drawX<0 || obj -> drawX >=SCREEN_X){
+			//
+		}
+	}
 }

@@ -18,7 +18,7 @@ struct harmObject
 	int drawX,drawY;
 	int speed;
 	int orientation;
-	const struct imageStruct img;
+	const struct imageStruct *img;
 };
 
 struct gameMap
@@ -26,6 +26,7 @@ struct gameMap
 	int rows,cols;
 	int orientation;
 	int frogX,frogY;
+	int numbOfHarm;
 	struct harmObject *hObjs;
 	struct Tile **table;	
 };

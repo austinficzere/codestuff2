@@ -3,6 +3,8 @@
 #include "Resources/city.c"
 #include "Resources/bus.c"
 #include "Resources/pauseMenu.c"
+#include "Resources/bus2.c"
+#include "global.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -22,8 +24,14 @@ struct Background {
 } bg = {{&cityImage, NULL, NULL, NULL}, 0};
 
 struct ValuePacks {
-	const struct imageStruct *vp[8]
-} vPacks = {{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
+	int length;
+	const struct imageStruct *vp[];
+} vPacks = {8,{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
+
+struct harmObjectImg {
+	int length;
+	const struct imageStruct *imgs[]
+} hObjImg = {2,{&busImage,&bus2Image}};
 
 struct fbs framebufferstruct;
 
@@ -85,6 +93,12 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 				}
 			}
 		}
+	}
+
+	for(int i = 0;i<gm.numbOfHarm;i++){
+		clearObj(prevMap.hObjs[i].img,&cityImage,prevMap.hObjs[i].drawX,prevMap.hObjs[i].drawY);
+		const struct imageStruct *currImg =  gm.hObjs[i].img;
+		draw( (int *)currImg -> image_pixels,currImg -> width, currImg -> height, gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].orientation,TRANSPARENT);
 	}
 
 	// Draw frog
@@ -240,6 +254,10 @@ void clearObj(const struct imageStruct *img, const struct imageStruct *rplc,int 
 		}
 	}
 	free(pixel);
+}
+
+int collides(const struct imageStruct *obj1, const struct imageStruct *obj2){
+	// TODO
 }
 
 void drawBackground(struct Background *bg){

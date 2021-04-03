@@ -9,6 +9,7 @@
 
 int main(){
     int sTime = time(0);
+    srand(sTime);
 	struct ControllerStruct *cs;
 	cs = malloc(sizeof(struct ControllerStruct));
 
@@ -26,7 +27,7 @@ int main(){
 
     while(!gs.quit){
         drawGameState(&prevState,&gs);
-        wait(70000);
+        wait(16667);
         // update gamestate
         setCurrToPrev(&prevState, &gs);
        	updateGameState(&gs, cs -> controllerButton, sTime);
