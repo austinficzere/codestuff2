@@ -6,6 +6,8 @@
 #include "controller.h"
 #include "global.h"
 #include "gfx.h"
+#include "Resources/menus/menuSelector.c"
+#include "Resources/menus/pauseSelector.c"
 
 const int NUMB_LIVES = 3;
 const int START_TIME = 300;
@@ -80,13 +82,16 @@ int updateMenuScreen(struct gameState *gs, int button, int menuState)
 	{
 		if (isButtonPressed(button,UP_BUTTON))
 		{
+			drawSelector(menuSelector, 0, 0);
 			return 0;
 		}
 		if (isButtonPressed(button,DOWN_BUTTON))
 		{
+			drawSelector(menuSelector, 0, 0);
 			return 1;
 		}
 	}
+	drawSelector(menuSelector, 0, 0);
 	return menuState;
 }
 
@@ -118,10 +123,12 @@ int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 	{
 		if (isButtonPressed(button,UP_BUTTON))
 		{
+			drawSelector(pauseSelector, 0, 0);
 			return 0;
 		}
 		if (isButtonPressed(button,DOWN_BUTTON))
 		{
+			drawSelector(pauseSelector, 0, 0);
 			return 1;
 		}
 		if (isButtonPressed(button,START_BUTTON))
@@ -129,7 +136,7 @@ int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 			return -1;
 		}
 	}
-
+	drawSelector(pauseSelector, 0, 0);
 	return pauseState;
 }
 
