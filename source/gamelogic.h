@@ -43,6 +43,7 @@ struct gameState
 	int hasWon;
 	int hasLost;
 	int gameStage;
+	int state;
 };
 
 #endif

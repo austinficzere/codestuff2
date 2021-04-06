@@ -208,6 +208,7 @@ struct gameState initGameState()
 	gs.hasWon = 0;
 	gs.hasLost = 0;
 	gs.gameStage = 0;
+	gs.state = 0;
 	return gs;
 }
 
@@ -225,4 +226,9 @@ void  *harm_obj_thread(void *arg){
 			//
 		}
 	}
+}
+
+int collides(int l1, int r1, int l2, int r2){
+
+
 }
