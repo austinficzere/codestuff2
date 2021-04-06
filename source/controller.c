@@ -77,7 +77,7 @@ void  *controller_thread(void *arg)
         // Initialzing the button
         int button = NONE_PRESSED;
 
-	while(!isButtonPressed(button,START_BUTTON)){
+	while(mem -> isGameOn){
         	button = Read_SNES(gpio); // read info from SNES
 		mem -> controllerButton = button;
 		wait(750);

@@ -16,6 +16,7 @@ int main(){
     srand(sTime);
 	struct ControllerStruct *cs;
 	cs = malloc(sizeof(struct ControllerStruct));
+    cs -> isGameOn = 1;
 
 	pthread_t controller_id;
 	pthread_attr_t attr;

@@ -6,6 +6,7 @@ const int SCREEN_Y;
 
 struct ControllerStruct{
 	int controllerButton;
+	int isGameOn;
 };
 
 #endif

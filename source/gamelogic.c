@@ -149,7 +149,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
 	updateHarmObjects(gs -> map);
 	if (isButtonPressed(button,START_BUTTON)){
-		gs -> state = 2;
+		gs -> state = 1;
 	}
 
 	if(button!=NONE_PRESSED){
