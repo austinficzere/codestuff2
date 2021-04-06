@@ -251,6 +251,11 @@ void drawBackground(struct Background *bg){
 	draw((int *)currBackground -> image_pixels, currBackground -> width, currBackground -> height,0,0,0,!TRANSPARENT);
 }
 
+void drawSelector(const struct imageStruct *image, int yOff, int xOff)
+{
+	draw((int *)image -> image_pixels, image -> width, image -> height,xOff,yOff,0,!TRANSPARENT);
+}
+
 /* Draw a pixel */
 void drawPixel(Pixel *pixel){
 	long int location = (pixel->x +framebufferstruct.xOff) * (framebufferstruct.bits/8) +
