@@ -19,6 +19,8 @@ int isGameEnd(struct gameState *gs);
 
 void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr);
 void updateHarmObjects(struct gameMap gm);
+int collides(int left1, int right1, const struct imageStruct *img1, int left2, int right2, const struct imageStruct *img2);
+int frogCollideHarm(struct gameMap gm);
 
 
 struct Tile **createTable(int rows, int cols)
@@ -135,18 +137,15 @@ int updatePauseScreen(struct gameState *gs, int button, int where)
 
 void updateGameState(struct gameState *gs, int button, int startTime)
 {
-	if (gs -> numbLives == 0)
-	{
+	if (gs -> numbLives == 0){
 		gs -> hasLost = 1;
 		return;
 	}
 
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
 	updateHarmObjects(gs -> map);
-	if (isButtonPressed(button,START_BUTTON))
-	{
+	if (isButtonPressed(button,START_BUTTON)){
 		gs -> gameStage = -1;
-		return;
 	}
 
 	if(button!=NONE_PRESSED){
@@ -177,12 +176,12 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 
 	// Check collision with harm object
-	/*
-	if(collides){
+	
+	if(frogCollideHarm(gs -> map)){
 		gs -> numbLives--;
-		gs -> map.frogX = map.cols/2;
-		gs -> map.frogY = map.rows-2;
-	}*/
+		gs -> map.frogX = gs -> map.cols/2;
+		gs -> map.frogY = gs -> map.rows-2;
+	}
 
 	if (gs -> map.frogY == 0)
 	{
@@ -309,7 +308,17 @@ void  *harm_obj_thread(void *arg){
 	}
 }
 
-int collides(int l1, int r1, int l2, int r2){
+int frogCollideHarm(struct gameMap gm){
+	int xOff = tileToPixel(SCREEN_X, gm.cols, gm.frogX);
+	int yOff = tileToPixel(SCREEN_Y, gm.rows, gm.frogY);
+	for(int i = 0;i<gm.numbOfHarm;i++){
+		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img)){
+			return 1;
+		}
+	}
+	return 0;
+}
 
-
+int collides(int left1, int right1, const struct imageStruct *img1, int left2, int right2, const struct imageStruct *img2){
+	return 0;
 }
