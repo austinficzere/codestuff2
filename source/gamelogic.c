@@ -99,6 +99,12 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		return;
 	}
 
+	if(frogCollideHarm(gs -> map)){
+		gs -> numbLives--;
+		gs -> map.frogX = gs -> map.cols/2;
+		gs -> map.frogY = gs -> map.rows-2;
+	}
+
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
 	updateHarmObjects(gs -> map);
 	if (isButtonPressed(button,START_BUTTON)){
@@ -133,12 +139,6 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 
 	// Check collision with harm object
-	
-	if(frogCollideHarm(gs -> map)){
-		gs -> numbLives--;
-		gs -> map.frogX = gs -> map.cols/2;
-		gs -> map.frogY = gs -> map.rows-2;
-	}
 
 	if (gs -> map.frogY == 0)
 	{
@@ -276,6 +276,12 @@ int frogCollideHarm(struct gameMap gm){
 	return 0;
 }
 
-int collides(int left1, int right1, const struct imageStruct *img1, int left2, int right2, const struct imageStruct *img2){
+int collides(int x1, int y1, const struct imageStruct *img1, int x2, int y2, const struct imageStruct *img2){
+	if (x1 < x2  + img2 -> width &&
+   x1 + img1 -> width > x2 &&
+   y1 < y2 + img2 -> height &&
+   y1 + img1 -> height > y2) {
+	   return 1;
+	}
 	return 0;
 }

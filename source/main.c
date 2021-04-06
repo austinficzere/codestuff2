@@ -28,6 +28,7 @@ int main(){
     int where = 0;
 
     while(!gs.quit){
+        /*
         if(gs.state == 0)
         {
             drawMenuScreen();
@@ -45,20 +46,12 @@ int main(){
         {
             drawPauseScreen();
         }
-        else 
-        {
-            drawGameState(&prevState,&gs);
-        }
-        wait(33333);
+        */
+        drawGameState(&prevState,&gs);
+        wait(100000);
         // update gamestate
         setCurrToPrev(&prevState, &gs);
        	updateGameState(&gs, cs -> controllerButton, sTime);
-        
-        while (gs.gameStage == -1)
-        {
-            // drawPauseScreen();
-            // update gamestate
-        }
 
         // Change prev and current
     }

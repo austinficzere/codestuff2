@@ -3,6 +3,7 @@
 #include "Resources/city.c"
 #include "Resources/bus.c"
 #include "Resources/pauseMenu.c"
+#include "Resources/startMenu.c"
 #include "Resources/bus2.c"
 #include "global.h"
 #include <stdio.h>
@@ -45,7 +46,7 @@ void drawScore();
 void drawTime();
 void drawLives();
 void drawSteps();
-//void drawMenuScreen(struct MenuScreen *ms);
+void drawMenuScreen();
 void drawPauseScreen();
 void drawMap(struct gameMap prevMap, struct gameMap gm);
 int tileToPixel();
@@ -59,7 +60,7 @@ const int TRANSPARENT = 1;
 
 void initGFX(){
 	framebufferstruct = initFbInfo();
-	drawMenuScreen();
+	drawBackground(&bg);
 }
 
 void drawGameState(struct gameState *prevState,struct gameState *gs)
@@ -135,7 +136,7 @@ void drawSteps()
 }
 
 void drawMenuScreen(){
-	draw((int *)menuScreenImage.image_pixels, menuScreenImage.width, menuScreenImage.height,0,0,0,!TRANSPARENT);
+	draw((int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
 }
 
 void drawPauseScreen(){
@@ -213,20 +214,6 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 		}
 		y += yInc;
 	}
-
-	/*
-	for(int y = 0; y<height;y++){
-		for(int x = 0;x<width;x++){
-			if(!transparent || (transparent && pixels[i]!=0)){
-				pixel -> color = pixels[i];
-				pixel -> x = xOff + x;
-				pixel -> y = yOff + y;	
-				drawPixel(pixel);
-			}
-			i++;
-		}
-	}
-	*/
 	
 	free(pixel);
 }
