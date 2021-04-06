@@ -24,8 +24,31 @@ int main(){
     prevState.map.frogX = 0;
 
     initGFX();
+
+    int where = 0;
+
     while(!gs.quit){
-        drawGameState(&prevState,&gs);
+        if(gs.state == 0)
+        {
+            drawMenuScreen();
+            where = updateMenuScreen(&gs, cs -> controllerButton, where);
+            if (where == 2)
+            {
+                gs.state = 2;
+            }
+            if (where == 3)
+            {
+                gs.quit = 1;
+            }
+        }
+        else if (gs.state == 1)
+        {
+            drawPauseScreen();
+        }
+        else 
+        {
+            drawGameState(&prevState,&gs);
+        }
         wait(33333);
         // update gamestate
         setCurrToPrev(&prevState, &gs);
