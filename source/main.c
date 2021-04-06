@@ -24,7 +24,6 @@ int main(){
     prevState.map.frogX = 0;
 
     initGFX();
-
     while(!gs.quit){
         drawGameState(&prevState,&gs);
         wait(33333);
