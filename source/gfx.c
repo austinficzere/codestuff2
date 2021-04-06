@@ -256,10 +256,6 @@ void clearObj(const struct imageStruct *img, const struct imageStruct *rplc,int 
 	free(pixel);
 }
 
-int collides(const struct imageStruct *obj1, const struct imageStruct *obj2){
-	// TODO
-}
-
 void drawBackground(struct Background *bg){
 	const struct imageStruct *currBackground = bg -> backgrounds[bg -> currentB];
 	draw((int *)currBackground -> image_pixels, currBackground -> width, currBackground -> height,0,0,0,!TRANSPARENT);
