@@ -28,6 +28,7 @@ int main(){
     struct gameState prevState = initGameState();
     prevState.gameStage = 5;
     prevState.map.frogX = 0;
+    prevState.state = 10;
 
     initGFX();
 
@@ -38,16 +39,11 @@ int main(){
         wait(33333);
         if(gs.state == MENU_STATE)
         {
-            drawMenuScreen();
+            if(prevState.state  != gs.state){
+                drawMenuScreen();
+                prevState.state = gs.state;
+            }
             currMenuState = updateMenuScreen(&gs, cs -> controllerButton, currMenuState);
-            if (currMenuState == 2)
-            {
-                gs.state = 2;
-            }
-            if (currMenuState == 3)
-            {
-                gs.quit = 1;
-            }
         }
         else if (gs.state == PAUSE_STATE)
         {

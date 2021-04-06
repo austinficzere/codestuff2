@@ -5,6 +5,8 @@
 
 const struct imageStruct busImage; 
 const struct imageStruct frogImage32; 
+const struct imageStruct startMenuImage;
+const struct imageStruct pauseMenuImage;
 void drawGameState(struct gameState *prevState,struct gameState *gs);
 void initGFX();
 void drawMenuScreen();

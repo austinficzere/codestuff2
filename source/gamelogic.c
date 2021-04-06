@@ -56,42 +56,28 @@ int isGameEnd(struct gameState *gs)
 
 int updateMenuScreen(struct gameState *gs, int button, int menuState)
 {
-	if (menuState == 0)
+	if (menuState == 0 && isButtonPressed(button,A_BUTTON))
 	{
-		if(button!=NONE_PRESSED)
-		{
-			if (isButtonPressed(button,A_BUTTON))
-			{
-				return 2;
-			}
-		}
+		gs -> state = 2;
 	}
 
-	if (menuState == 1)
+	else if (menuState == 1 && isButtonPressed(button,A_BUTTON))
 	{
-		if(button!=NONE_PRESSED)
-		{
-			if (isButtonPressed(button,A_BUTTON))
-			{
-				return 3;
-			}
-		}
+		gs -> quit = 1;
 	}
 
-	if(button!=NONE_PRESSED)
+	else if (isButtonPressed(button,UP_BUTTON))
 	{
-		if (isButtonPressed(button,UP_BUTTON))
-		{
-			drawSelector(menuSelector, 0, 0);
-			return 0;
-		}
-		if (isButtonPressed(button,DOWN_BUTTON))
-		{
-			drawSelector(menuSelector, 0, 0);
-			return 1;
-		}
+		clearObj(&menuSelector, &startMenuImage, 535, 505);
+		drawSelector(&menuSelector, 535, 415);
+		menuState = 0;
 	}
-	drawSelector(menuSelector, 0, 0);
+	else if (isButtonPressed(button,DOWN_BUTTON))
+	{
+		clearObj(&menuSelector, &startMenuImage, 535, 415);
+		drawSelector(&menuSelector, 535, 505);
+		menuState = 1;
+	}
 	return menuState;
 }
 

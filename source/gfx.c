@@ -51,6 +51,7 @@ void drawPauseScreen();
 void drawMap(struct gameMap prevMap, struct gameMap gm);
 int tileToPixel();
 void initGFX();
+void drawSelector(const struct imageStruct *image, int xOff, int yOff);
 
 const int SCREEN_X = 1280;
 const int SCREEN_Y = 720;
@@ -251,9 +252,9 @@ void drawBackground(struct Background *bg){
 	draw((int *)currBackground -> image_pixels, currBackground -> width, currBackground -> height,0,0,0,!TRANSPARENT);
 }
 
-void drawSelector(const struct imageStruct *image, int yOff, int xOff)
+void drawSelector(const struct imageStruct *image, int xOff, int yOff)
 {
-	draw((int *)image -> image_pixels, image -> width, image -> height,xOff,yOff,0,!TRANSPARENT);
+	draw((int *)image -> image_pixels, image -> width, image -> height,xOff,yOff,0,TRANSPARENT);
 }
 
 /* Draw a pixel */
