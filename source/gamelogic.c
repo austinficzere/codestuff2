@@ -6,8 +6,6 @@
 #include "controller.h"
 #include "global.h"
 #include "gfx.h"
-#include "Resources/menus/menuSelector.c"
-#include "Resources/menus/pauseSelector.c"
 
 const int NUMB_LIVES = 3;
 const int START_TIME = 300;
@@ -68,14 +66,10 @@ int updateMenuScreen(struct gameState *gs, int button, int menuState)
 
 	else if (isButtonPressed(button,UP_BUTTON))
 	{
-		clearObj(&menuSelector, &startMenuImage, 535, 505);
-		drawSelector(&menuSelector, 535, 415);
 		menuState = 0;
 	}
 	else if (isButtonPressed(button,DOWN_BUTTON))
 	{
-		clearObj(&menuSelector, &startMenuImage, 535, 415);
-		drawSelector(&menuSelector, 535, 505);
 		menuState = 1;
 	}
 	return menuState;
@@ -83,53 +77,36 @@ int updateMenuScreen(struct gameState *gs, int button, int menuState)
 
 int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 {
-	if (pauseState == 0)
+	if (pauseState == 0 && isButtonPressed(button,A_BUTTON))
 	{
-		if(button!=NONE_PRESSED)
-		{
-			if (isButtonPressed(button,A_BUTTON))
-			{
-				return 2;
-			}
-		}
+		*gs = initGameState();
 	}
 
-	if (pauseState == 1)
+	else if (pauseState == 1 && isButtonPressed(button,A_BUTTON))
 	{
-		if(button!=NONE_PRESSED)
-		{
-			if (isButtonPressed(button,A_BUTTON))
-			{
-				return 3;
-			}
-		}
+		gs -> quit = 1;
 	}
 
-	if(button!=NONE_PRESSED)
+	else if (isButtonPressed(button,UP_BUTTON))
 	{
-		if (isButtonPressed(button,UP_BUTTON))
-		{
-			drawSelector(pauseSelector, 0, 0);
-			return 0;
-		}
-		if (isButtonPressed(button,DOWN_BUTTON))
-		{
-			drawSelector(pauseSelector, 0, 0);
-			return 1;
-		}
-		if (isButtonPressed(button,START_BUTTON))
-		{
-			return -1;
-		}
+		pauseState = 0;
 	}
-	drawSelector(pauseSelector, 0, 0);
+	else if (isButtonPressed(button,DOWN_BUTTON))
+	{
+		pauseState = 1;
+	}
+	else if (isButtonPressed(button,START_BUTTON))
+	{
+		gs -> state = 2;
+	}
 	return pauseState;
 }
 
 void updateGameState(struct gameState *gs, int button, int startTime)
 {
 	if (isGameEnd(gs)){
-		gs -> hasLost = 1;
+		gs ->  quit = 1;
+		printf("hello");
 		return;
 	}
 
@@ -234,7 +211,7 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm){
 	for(int i = 0;i<numbOfHarm;i++){
 		hObjs[i].img = &busImage;
 		hObjs[i].speed = randomNumb(1,20);
-		hObjs[i].drawY = randomNumb(0,SCREEN_Y);
+		hObjs[i].drawY = randomNumb(100,SCREEN_Y-100);
 		hObjs[i].orientation = (randomNumb(0,1) ? 0 : 2);
 		if(hObjs[i].orientation == 2){
 			hObjs[i].speed = -(hObjs[i].speed);

@@ -5,6 +5,8 @@
 #include "Resources/menus/pauseMenu.c"
 #include "Resources/menus/startMenu.c"
 #include "Resources/sprites/bus2.c"
+#include "Resources/menus/menuSelector.c"
+#include "Resources/menus/pauseSelector.c"
 #include "global.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -139,14 +141,41 @@ void drawSteps()
 
 }
 
-void drawMenuScreen(){
-	draw((int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
+void drawMenuScreen(struct gameState *prevState,struct gameState *gs, int menuState){
+	if(prevState -> state  != gs -> state){
+		draw((int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
+    	prevState -> state = gs -> state;
+    }
+
+	if(menuState == 0){
+		clearObj(&menuSelector, &startMenuImage, 535, 505);
+		drawSelector(&menuSelector, 535, 415);
+	}else{
+		clearObj(&menuSelector, &startMenuImage, 535, 415);
+		drawSelector(&menuSelector, 535, 505);
+	}
 }
 
-void drawPauseScreen(){
+void drawPauseScreen(struct gameState *prevState,struct gameState *gs, int pauseState){
 	int xOff = (SCREEN_X/2) - (pauseMenuImage.width/2);
 	int yOff = (SCREEN_Y/2) - (pauseMenuImage.height/2);
-	draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
+
+	if(prevState -> state  != gs -> state){
+        draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
+        prevState -> state = gs -> state;
+    }
+
+	if(pauseState == 0){
+		//clearObj(&pauseSelector, &pauseMenuImage, 574, 423);
+		drawSelector(&pauseSelector, 574, 363);
+	}else{
+		//clearObj(&pauseSelector, &pauseMenuImage, 574, 363);
+		drawSelector(&pauseSelector, 574, 423);
+	}
+
+	if(gs -> state == 2){
+		clearObj(&pauseMenuImage, bg.backgrounds[bg.currentB], xOff,yOff);
+	}
 }
 
 int tileToPixel(int totalPixelLength, int totalTileLength, int currVal)
