@@ -60,11 +60,14 @@ const int TRANSPARENT = 1;
 
 void initGFX(){
 	framebufferstruct = initFbInfo();
-	drawBackground(&bg);
 }
 
 void drawGameState(struct gameState *prevState,struct gameState *gs)
 {
+	if(prevState -> gameStage != gs -> gameStage){
+		bg.currentB = gs -> gameStage;
+		drawBackground(&bg);
+	}
 	if(prevState -> score != gs -> score)
 		drawScore();
 	if(prevState -> time != gs -> time)

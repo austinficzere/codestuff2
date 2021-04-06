@@ -20,6 +20,7 @@ int isGameEnd(struct gameState *gs);
 void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr);
 void updateHarmObjects(struct gameMap gm);
 int collides(int left1, int right1, const struct imageStruct *img1, int left2, int right2, const struct imageStruct *img2);
+
 int frogCollideHarm(struct gameMap gm);
 
 
@@ -54,9 +55,9 @@ int isGameEnd(struct gameState *gs)
 	return 0;
 }
 
-int updateMenuScreen(struct gameState *gs, int button, int where)
+int updateMenuScreen(struct gameState *gs, int button, int menuState)
 {
-	if (where = 0)
+	if (menuState == 0)
 	{
 		if(button!=NONE_PRESSED)
 		{
@@ -67,7 +68,7 @@ int updateMenuScreen(struct gameState *gs, int button, int where)
 		}
 	}
 
-	if (where = 1)
+	if (menuState == 1)
 	{
 		if(button!=NONE_PRESSED)
 		{
@@ -89,12 +90,12 @@ int updateMenuScreen(struct gameState *gs, int button, int where)
 			return 1;
 		}
 	}
-	return where;
+	return menuState;
 }
 
-int updatePauseScreen(struct gameState *gs, int button, int where)
+int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 {
-	if (where = 0)
+	if (pauseState == 0)
 	{
 		if(button!=NONE_PRESSED)
 		{
@@ -105,7 +106,7 @@ int updatePauseScreen(struct gameState *gs, int button, int where)
 		}
 	}
 
-	if (where = 1)
+	if (pauseState == 1)
 	{
 		if(button!=NONE_PRESSED)
 		{
@@ -132,7 +133,7 @@ int updatePauseScreen(struct gameState *gs, int button, int where)
 		}
 	}
 
-	return where;
+	return pauseState;
 }
 
 void updateGameState(struct gameState *gs, int button, int startTime)
@@ -151,7 +152,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
 	updateHarmObjects(gs -> map);
 	if (isButtonPressed(button,START_BUTTON)){
-		gs -> gameStage = -1;
+		gs -> state = 2;
 	}
 
 	if(button!=NONE_PRESSED){
@@ -217,6 +218,7 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
 	for(int i = 0;i<curr -> numbOfHarm;i++){
 		prev -> hObjs[i].drawX = curr -> hObjs[i].drawX;
 		prev -> hObjs[i].drawY = curr -> hObjs[i].drawY;
+		prev -> hObjs[i].speed= curr -> hObjs[i].speed;
 	}
 }
 
@@ -295,6 +297,11 @@ struct gameState initGameState()
 void updateHarmObjects(struct gameMap gm){
 	for(int i = 0;i<gm.numbOfHarm;i++){
 		gm.hObjs[i].drawX = gm.hObjs[i].drawX + gm.hObjs[i].speed;
+		if(gm.hObjs[i].drawX<0){
+			gm.hObjs[i].drawX = SCREEN_X-(gm.hObjs[i].img -> width);
+		}else if(gm.hObjs[i].drawX >= SCREEN_X){
+			gm.hObjs[i].drawX = 0;
+		}
 	}
 }
 
@@ -302,8 +309,10 @@ void  *harm_obj_thread(void *arg){
 	struct harmObject *obj = (struct harmObject *)arg;
 	while(1){
 		obj -> drawX = obj -> drawX + obj -> speed;
-		if(obj -> drawX<0 || obj -> drawX >=SCREEN_X){
-			//
+		if(obj -> drawX<0){
+			obj -> drawX = SCREEN_X-(obj -> img -> width);
+		}else if(obj -> drawX >= SCREEN_X){
+			obj -> drawX = 0;
 		}
 	}
 }

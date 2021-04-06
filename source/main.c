@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+const int MENU_STATE = 0;
+const int PAUSE_STATE = 1;
+const int GAME_STATE = 2;
+
 int main(){
     int sTime = time(0);
     srand(sTime);
@@ -21,54 +25,54 @@ int main(){
 
     struct gameState gs = initGameState();
     struct gameState prevState = initGameState();
+    prevState.gameStage = 5;
     prevState.map.frogX = 0;
 
     initGFX();
 
-    int where = 0;
-    int where2 = 0;
+    int currMenuState = 0;
+    int currPauseState = 0;
 
     while(!gs.quit){
-        /*
-        if(gs.state == 0)
+        wait(33333);
+        if(gs.state == MENU_STATE)
         {
             drawMenuScreen();
-            where = updateMenuScreen(&gs, cs -> controllerButton, where);
-            if (where == 2)
+            currMenuState = updateMenuScreen(&gs, cs -> controllerButton, currMenuState);
+            if (currMenuState == 2)
             {
                 gs.state = 2;
             }
-            if (where == 3)
+            if (currMenuState == 3)
             {
                 gs.quit = 1;
             }
         }
-        else if (gs.state == 1)
+        else if (gs.state == PAUSE_STATE)
         {
             drawPauseScreen();
-            where2 = updatePauseScreen(&gs, cs -> controllerButton, where2);
-            if (where2 == 2)
+            currPauseState = updatePauseScreen(&gs, cs -> controllerButton, currPauseState);
+            if (currPauseState == 2)
             {
                 gs = initGameState();
             }
-            else if (where2 == 3)
+            else if (currPauseState == 3)
             {
                 gs.quit = 1;
             }
-            else if (where2 == -1)
+            else if (currPauseState == -1)
             {
                 gs.state = 2;
             }
+        }else{
+            drawGameState(&prevState,&gs);
+            setCurrToPrev(&prevState, &gs);
+       	    updateGameState(&gs, cs -> controllerButton, sTime);
         }
-        */
-        drawGameState(&prevState,&gs);
-        wait(100000);
         // update gamestate
-        setCurrToPrev(&prevState, &gs);
-       	updateGameState(&gs, cs -> controllerButton, sTime);
 
         // Change prev and current
     }
 
-    return 0;
+    return 1;
 }
