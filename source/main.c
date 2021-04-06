@@ -26,6 +26,7 @@ int main(){
     initGFX();
 
     int where = 0;
+    int where2 = 0;
 
     while(!gs.quit){
         /*
@@ -45,6 +46,19 @@ int main(){
         else if (gs.state == 1)
         {
             drawPauseScreen();
+            where2 = updatePauseScreen(&gs, cs -> controllerButton, where2);
+            if (where2 == 2)
+            {
+                gs = initGameState();
+            }
+            else if (where2 == 3)
+            {
+                gs.quit = 1;
+            }
+            else if (where2 == -1)
+            {
+                gs.state = 2;
+            }
         }
         */
         drawGameState(&prevState,&gs);
