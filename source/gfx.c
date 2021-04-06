@@ -1,10 +1,10 @@
 #include "Resources/image.h"
-#include "Resources/frogImage32.c"
-#include "Resources/city.c"
-#include "Resources/bus.c"
-#include "Resources/pauseMenu.c"
-#include "Resources/startMenu.c"
-#include "Resources/bus2.c"
+#include "Resources/sprites/frogImage32.c"
+#include "Resources/backgrounds/city.c"
+#include "Resources/sprites/bus.c"
+#include "Resources/menus/pauseMenu.c"
+#include "Resources/menus/startMenu.c"
+#include "Resources/sprites/bus2.c"
 #include "global.h"
 #include <stdio.h>
 #include <stdlib.h>

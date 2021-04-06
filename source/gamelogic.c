@@ -47,9 +47,6 @@ struct Tile copyTile(struct Tile tc){
 int isGameEnd(struct gameState *gs)
 {
 	if(gs->numbLives == 0 || gs->time == 0 || gs -> movesLeft == 0 || gs -> hasWon || gs -> hasLost || gs -> quit){
-		if(gs -> hasWon){
-			// update score
-		}
 		return 1;	
 	}
 	return 0;
@@ -138,7 +135,7 @@ int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 
 void updateGameState(struct gameState *gs, int button, int startTime)
 {
-	if (gs -> numbLives == 0){
+	if (isGameEnd(gs)){
 		gs -> hasLost = 1;
 		return;
 	}
