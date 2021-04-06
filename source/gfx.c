@@ -59,7 +59,7 @@ const int TRANSPARENT = 1;
 
 void initGFX(){
 	framebufferstruct = initFbInfo();
-	drawBackground(&bg);
+	drawMenuScreen();
 }
 
 void drawGameState(struct gameState *prevState,struct gameState *gs)

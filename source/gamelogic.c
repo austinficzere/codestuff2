@@ -52,6 +52,44 @@ int isGameEnd(struct gameState *gs)
 	return 0;
 }
 
+int updateMenuScreen(struct gameState *gs, int button, int where)
+{
+	if (where = 0)
+	{
+		if(button!=NONE_PRESSED)
+		{
+			if (isButtonPressed(button,A_BUTTON))
+			{
+				return 2;
+			}
+		}
+	}
+
+	if (where = 1)
+	{
+		if(button!=NONE_PRESSED)
+		{
+			if (isButtonPressed(button,A_BUTTON))
+			{
+				return 3;
+			}
+		}
+	}
+
+	if(button!=NONE_PRESSED)
+	{
+		if (isButtonPressed(button,UP_BUTTON))
+		{
+			return 0;
+		}
+		if (isButtonPressed(button,DOWN_BUTTON))
+		{
+			return 1;
+		}
+	}
+	return where;
+}
+
 void updateGameState(struct gameState *gs, int button, int startTime)
 {
 	if (gs -> numbLives == 0)
