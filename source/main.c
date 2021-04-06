@@ -45,7 +45,7 @@ int main(){
         else if (gs.state == 1)
         {
             drawPauseScreen();
-            where2 = updateMenuScreen(&gs, cs -> controllerButton, where2);
+            where2 = updatePauseScreen(&gs, cs -> controllerButton, where2);
             if (where2 == 2)
             {
                 gs = initGameState();
