@@ -134,9 +134,9 @@ void drawSteps()
 
 }
 
-//void drawMenuScreen(struct MenuScreen *ms){
-//	draw((int *)menuScreenImage.image_pixels, menuScreenImage.width, menuScreenImage.height,0,0,0,!TRANSPARENT);
-//}
+void drawMenuScreen(){
+	draw((int *)menuScreenImage.image_pixels, menuScreenImage.width, menuScreenImage.height,0,0,0,!TRANSPARENT);
+}
 
 void drawPauseScreen(){
 	int xOff = (SCREEN_X/2) - (pauseMenuImage.width/2);
@@ -151,84 +151,84 @@ int tileToPixel(int totalPixelLength, int totalTileLength, int currVal)
 
 void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation, int transparent){
 
-		Pixel *pixel = malloc(sizeof(Pixel));
-		int i = 0;
+	Pixel *pixel = malloc(sizeof(Pixel));
+	int i = 0;
 
-		int xSet,xEnd,xInc;
-		int ySet,yEnd,yInc;
+	int xSet,xEnd,xInc;
+	int ySet,yEnd,yInc;
+
+	int flip = 0;
 	
-		int flip = 0;
-		
-		if(orientation == 0){
-			xSet = ySet = 0;
-			xInc = yInc = 1;
+	if(orientation == 0){
+		xSet = ySet = 0;
+		xInc = yInc = 1;
 
-			xEnd = width;
-			yEnd = height;
+		xEnd = width;
+		yEnd = height;
 
-		}
-		else if(orientation == 1){
-			flip = 1;
+	}
+	else if(orientation == 1){
+		flip = 1;
 
-			ySet = height-1;
-			yEnd = -1;
-			yInc = -1;
+		ySet = height-1;
+		yEnd = -1;
+		yInc = -1;
 
-			xSet = 0;
-			xEnd = width;
-			xInc = 1;
-		}
-		else if(orientation == 2){
-			xSet = width - 1;
-			ySet = height - 1;
+		xSet = 0;
+		xEnd = width;
+		xInc = 1;
+	}
+	else if(orientation == 2){
+		xSet = width - 1;
+		ySet = height - 1;
 
-			xInc = yInc = -1;
+		xInc = yInc = -1;
 
-			yEnd = xEnd = -1;
-		}
-		else{
-			flip = 1;
+		yEnd = xEnd = -1;
+	}
+	else{
+		flip = 1;
 
-			ySet = 0;
-			yEnd = height;
-			yInc = 1;
+		ySet = 0;
+		yEnd = height;
+		yInc = 1;
 
-			xSet = width -1;
-			xEnd = -1;
-			xInc = -1;
-		}
+		xSet = width -1;
+		xEnd = -1;
+		xInc = -1;
+	}
 
-		int y = ySet;
-		while(y!=yEnd){
-			int x = xSet;
-			while(x!=xEnd){
-				if(!transparent || (transparent && pixels[i]!=0)){
-					pixel -> color = pixels[i];
-					pixel -> x = xOff + (flip ? y : x);
-					pixel -> y = yOff + (flip ? x : y);	
-					drawPixel(pixel);
-				}
-				i++;
-				x += xInc;
+	int y = ySet;
+	while(y!=yEnd){
+		int x = xSet;
+		while(x!=xEnd){
+			if(!transparent || (transparent && pixels[i]!=0)){
+				pixel -> color = pixels[i];
+				pixel -> x = xOff + (flip ? y : x);
+				pixel -> y = yOff + (flip ? x : y);	
+				drawPixel(pixel);
 			}
-			y += yInc;
+			i++;
+			x += xInc;
 		}
+		y += yInc;
+	}
 
-		/*
-		for(int y = 0; y<height;y++){
-			for(int x = 0;x<width;x++){
-				if(!transparent || (transparent && pixels[i]!=0)){
-					pixel -> color = pixels[i];
-					pixel -> x = xOff + x;
-					pixel -> y = yOff + y;	
-					drawPixel(pixel);
-				}
-				i++;
+	/*
+	for(int y = 0; y<height;y++){
+		for(int x = 0;x<width;x++){
+			if(!transparent || (transparent && pixels[i]!=0)){
+				pixel -> color = pixels[i];
+				pixel -> x = xOff + x;
+				pixel -> y = yOff + y;	
+				drawPixel(pixel);
 			}
+			i++;
 		}
-		*/
-		
-		free(pixel);
+	}
+	*/
+	
+	free(pixel);
 }
 
 void clearObj(const struct imageStruct *img, const struct imageStruct *rplc,int xOff, int yOff){
