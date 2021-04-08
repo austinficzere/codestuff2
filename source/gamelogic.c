@@ -306,3 +306,25 @@ int collides(int x1, int y1, const struct imageStruct *img1, int x2, int y2, con
 	}
 	return 0;
 }
+
+void spawnValuePacks(int sTime, struct gameState *gs)
+{
+	int cTime = time(0) - sTime;
+	if (cTime >= 30)
+	{
+		for(int i = 0; i < (gs -> map.rows); i++)
+		{
+			for(int j = 0; j < (gs -> map.cols); j++)
+			{
+				if (gs -> map.table[i][j] == 1)
+				{
+					// draw coin at table[i][j]
+				}
+				else if (gs -> map.table[i][j] == 2)
+				{
+					// draw heart at table[i][j]
+				}
+			}
+		}
+	} 
+}
