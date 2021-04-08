@@ -1,17 +1,19 @@
 #include "Resources/image.h"
 #include "Resources/sprites/frogImage32.c"
 #include "Resources/backgrounds/city.c"
-#include "Resources/sprites/bus.c"
+#include "Resources/backgrounds/railroads.c"
+#include "Resources/backgrounds/runway.c"
+#include "Resources/backgrounds/river.c"
 #include "Resources/menus/pauseMenu.c"
 #include "Resources/menus/startMenu.c"
-#include "Resources/sprites/bus2.c"
 #include "Resources/menus/menuSelector.c"
 #include "Resources/menus/pauseSelector.c"
 #include "Resources/sprites/coinImg.c"
 #include "Resources/sprites/heartImg.c"
-#include "Resources/backgrounds/railroads.c"
 #include "Resources/HUD/HUDimages.c"
 #include "Resources/HUD/numbers.c"
+#include "Resources/sprites/bus.c"
+#include "Resources/sprites/bus2.c"
 #include "global.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +24,7 @@
 #include <math.h>
 
 typedef struct {
-	int color;
+	unsigned short int color;
 	int x, y;
 } Pixel;
 
@@ -30,7 +32,7 @@ struct Background {
 	// arrray of background
 	const struct imageStruct *backgrounds[4];
 	int currentB;
-} bg = {{&cityImage, &railRoadImage, NULL, NULL}, 0};
+} bg = {{&cityImage, &railRoadImage, &runwayImage, &riverImage}, 0};
 
 struct ValuePacks {
 	int length;
@@ -41,6 +43,11 @@ struct NumbersImg{
 	int length;
 	const struct imageStruct *nums[];
 } NumberImages = {10,{&zeroImage,&oneImage,&twoImage,&threeImage,&fourImage,&fiveImage,&sixImage,&sevenImage,&eightImage,&nineImage}};
+
+struct HUDImg{
+	int length;
+	const struct imageStruct *itemImgs[];
+} HUDImages = {4,{&livesHUDImage,&scoreHUDImage,&stepsHUDImage,&timeHUDImage}};
 
 struct harmObjectImg {
 	int length;
@@ -55,21 +62,24 @@ void clearObj(const struct imageStruct *img, const struct imageStruct *rplc, int
 void drawBackground(struct Background *bg);
 unsigned short int getPixel(int x, int y);
 void drawGameState(struct gameState *prevState,struct gameState *gs);
-void drawScore();
-void drawTime();
-void drawLives();
-void drawSteps();
 void drawMenuScreen();
 void drawPauseScreen();
 void drawMap(struct gameMap prevMap, struct gameMap gm);
 int tileToPixel();
 void initGFX();
 void drawSelector(const struct imageStruct *image, int xOff, int yOff);
-void drawNumber(int xOff, int yOff, int number);
+void drawNumber(int xOff, int yOff, int number, int toClear);
+void drawHUDItem(int prevNumber, int currNumber, int xOff, int yOff, int HUDtype);
 
 const int SCREEN_X = 1280;
 const int SCREEN_Y = 720;
 const int TRANSPARENT = 1;
+const int TO_CLEAR = 1;
+const int HUD_LIVES = 0;
+const int HUD_SCORE = 1;
+const int HUD_STEPS = 2;
+const int HUD_TIME = 3;
+const int HUD_YOFF = 10;
 
 //munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
 
@@ -83,20 +93,14 @@ void drawGameState(struct gameState *prevState,struct gameState *gs)
 		bg.currentB = gs -> gameStage;
 		drawBackground(&bg);
 	}
-	drawNumber(10,10,gs -> movesLeft);
-	/*
-	draw((int *)livesHUDImage.image_pixels,livesHUDImage.width,livesHUDImage.height,0,10, 0,TRANSPARENT);
-	draw((int *)stepsHUDImage.image_pixels,stepsHUDImage.width,stepsHUDImage.height,100,10, 0,TRANSPARENT);
-	draw((int *)scoreHUDImage.image_pixels,scoreHUDImage.width,scoreHUDImage.height,200,10, 0,TRANSPARENT);
-	*/
-	if(prevState -> score != gs -> score)
-		drawScore();
-	if(prevState -> time != gs -> time)
-		drawTime();
-	if(prevState -> numbLives != gs -> numbLives)
-		drawLives();
-	if(prevState -> movesLeft != gs -> movesLeft)
-		drawSteps();
+	if(prevState -> score != gs -> score);
+		drawHUDItem(prevState -> score, gs -> score, 10, HUD_YOFF ,HUD_SCORE);
+	if(prevState -> time != gs -> time);
+		drawHUDItem(prevState -> time, gs -> time, 200,HUD_YOFF,HUD_TIME);
+	if(prevState -> numbLives != gs -> numbLives);
+		drawHUDItem(prevState -> numbLives, gs -> numbLives, 400,HUD_YOFF, HUD_LIVES);
+	if(prevState -> movesLeft != gs -> movesLeft);
+		drawHUDItem(prevState -> movesLeft, gs -> movesLeft, 600,HUD_YOFF,HUD_STEPS);
 
 	drawMap(prevState -> map, gs -> map);
 }
@@ -114,7 +118,9 @@ void drawNumber(int xOff, int yOff, int number, int toClear){
 	for(int j = i-1;j>=0;j--){
 		if(!toClear){
 			draw((int *)NumberImages.nums[digits[j]] -> image_pixels,NumberImages.nums[digits[j]] -> width,
-			NumberImages.nums[digits[j]] -> height, currXOff,yOff , 0,TRANSPARENT);
+			NumberImages.nums[digits[j]] -> height, currXOff, yOff , 0,TRANSPARENT);
+		}else{
+			clearObj(NumberImages.nums[digits[j]], bg.backgrounds[bg.currentB], currXOff, yOff);
 		}
 
 		currXOff += 10 + NumberImages.nums[digits[j]] -> width;
@@ -163,26 +169,15 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 
 }
 
-void drawScore(){
-
-}
-
-void drawTime(){
-
-}
-
-void drawLives(){
-
-}
-
-void drawSteps()
-{
-
+void drawHUDItem(int prevNumber, int currNumber, int xOff, int yOff, int HUDtype){
+	draw((int *)HUDImages.itemImgs[HUDtype] -> image_pixels,HUDImages.itemImgs[HUDtype] -> width,HUDImages.itemImgs[HUDtype] -> height,xOff,yOff, 0,TRANSPARENT);
+	drawNumber(xOff+HUDImages.itemImgs[HUDtype] -> width+10,yOff,prevNumber,TO_CLEAR);
+	drawNumber(xOff+HUDImages.itemImgs[HUDtype] -> width+10,yOff,currNumber,!TO_CLEAR);
 }
 
 void drawMenuScreen(struct gameState *prevState,struct gameState *gs, int menuState){
 	if(prevState -> state  != gs -> state){
-		draw((int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
+		draw((unsigned short int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
     	prevState -> state = gs -> state;
     }
 
@@ -224,6 +219,7 @@ int tileToPixel(int totalPixelLength, int totalTileLength, int currVal)
 
 void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation, int transparent){
 
+	
 	Pixel *pixel = malloc(sizeof(Pixel));
 	int i = 0;
 
@@ -289,7 +285,6 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 	
 	free(pixel);
 }
-
 void clearObj(const struct imageStruct *img, const struct imageStruct *rplc,int xOff, int yOff){
 	Pixel *pixel = malloc(sizeof(Pixel));
 

@@ -12,7 +12,7 @@ const int START_TIME = 300;
 const int NUMB_MOVES = 300;
 const int MAP_ROWS = 30;
 const int MAP_COLS = 30;
-const int H_OBJ = 10;
+const int H_OBJ = 15;
 
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
