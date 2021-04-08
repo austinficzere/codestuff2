@@ -307,7 +307,7 @@ int collides(int x1, int y1, const struct imageStruct *img1, int x2, int y2, con
 	return 0;
 }
 
-void spawnValuePacks(int sTime, struct gameState *gs)
+/*void spawnValuePacks(int sTime, struct gameState *gs)
 {
 	int cTime = time(0) - sTime;
 	if (cTime >= 30)
@@ -328,3 +328,4 @@ void spawnValuePacks(int sTime, struct gameState *gs)
 		}
 	} 
 }
+*/

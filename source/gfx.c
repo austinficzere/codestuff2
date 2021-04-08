@@ -19,6 +19,7 @@
 #include "framebuffer.h"
 #include <unistd.h>
 #include "gamelogic.h"
+#include <math.h>
 
 typedef struct {
 	int color;
@@ -64,6 +65,7 @@ void drawMap(struct gameMap prevMap, struct gameMap gm);
 int tileToPixel();
 void initGFX();
 void drawSelector(const struct imageStruct *image, int xOff, int yOff);
+void drawNumber(int xOff, int yOff, int number);
 
 const int SCREEN_X = 1280;
 const int SCREEN_Y = 720;
@@ -81,9 +83,7 @@ void drawGameState(struct gameState *prevState,struct gameState *gs)
 		bg.currentB = gs -> gameStage;
 		drawBackground(&bg);
 	}
-	for(int i = 0;i<NumberImages.length;i++){
-		draw((int *)NumberImages.nums[i] -> image_pixels,NumberImages.nums[i] -> width,NumberImages.nums[i] -> height,10+50*i,10, 0,TRANSPARENT);
-	}
+	drawNumber(10,10,gs -> movesLeft);
 	/*
 	draw((int *)livesHUDImage.image_pixels,livesHUDImage.width,livesHUDImage.height,0,10, 0,TRANSPARENT);
 	draw((int *)stepsHUDImage.image_pixels,stepsHUDImage.width,stepsHUDImage.height,100,10, 0,TRANSPARENT);
@@ -99,6 +99,26 @@ void drawGameState(struct gameState *prevState,struct gameState *gs)
 		drawSteps();
 
 	drawMap(prevState -> map, gs -> map);
+}
+
+void drawNumber(int xOff, int yOff, int number, int toClear){
+	int digits[100];
+	int i = 0;
+	while(number!=0){
+		digits[i] = number%10;
+		number/=10;
+		i++;
+	}
+
+	int currXOff = xOff;
+	for(int j = i-1;j>=0;j--){
+		if(!toClear){
+			draw((int *)NumberImages.nums[digits[j]] -> image_pixels,NumberImages.nums[digits[j]] -> width,
+			NumberImages.nums[digits[j]] -> height, currXOff,yOff , 0,TRANSPARENT);
+		}
+
+		currXOff += 10 + NumberImages.nums[digits[j]] -> width;
+	}
 }
 
 void drawMap(struct gameMap prevMap, struct gameMap gm){

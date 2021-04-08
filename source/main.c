@@ -50,7 +50,7 @@ int main(){
             drawGameState(&prevState,&gs);
             setCurrToPrev(&prevState, &gs);
        	    updateGameState(&gs, cs -> controllerButton, sTime);
-            spawnValuePacks(sTime, &gs);
+            //spawnValuePacks(sTime, &gs);
         }
         // update gamestate
 
