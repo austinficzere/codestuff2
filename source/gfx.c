@@ -7,6 +7,9 @@
 #include "Resources/sprites/bus2.c"
 #include "Resources/menus/menuSelector.c"
 #include "Resources/menus/pauseSelector.c"
+#include "Resources/sprites/coinImg.c"
+#include "Resources/sprites/heartImg.c"
+#include "Resources/backgrounds/railroads.c"
 #include "global.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,12 +27,12 @@ struct Background {
 	// arrray of background
 	const struct imageStruct *backgrounds[4];
 	int currentB;
-} bg = {{&cityImage, NULL, NULL, NULL}, 0};
+} bg = {{&cityImage, &railRoadImage, NULL, NULL}, 0};
 
 struct ValuePacks {
 	int length;
 	const struct imageStruct *vp[];
-} vPacks = {8,{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
+} vPacks = {8,{NULL,&heartImage,&coinImage,NULL,NULL,NULL,NULL,NULL}};
 
 struct harmObjectImg {
 	int length;
@@ -95,6 +98,7 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 			if(gm.table[i][j].valuePack != 0){
 				if(prevMap.table[i][j].valuePack != gm.table[i][j].valuePack){
 					// clear previous value
+					
 
 					// Draw current 
 				}
@@ -103,7 +107,7 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 	}
 
 	for(int i = 0;i<gm.numbOfHarm;i++){
-		clearObj(prevMap.hObjs[i].img,&cityImage,prevMap.hObjs[i].drawX,prevMap.hObjs[i].drawY);
+		clearObj(prevMap.hObjs[i].img,bg.backgrounds[bg.currentB],prevMap.hObjs[i].drawX,prevMap.hObjs[i].drawY);
 		const struct imageStruct *currImg =  gm.hObjs[i].img;
 		draw( (int *)currImg -> image_pixels,currImg -> width, currImg -> height, gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].orientation,TRANSPARENT);
 	}
@@ -114,7 +118,7 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 		xOff = tileToPixel(SCREEN_X, prevMap.cols, prevMap.frogX);
 		yOff = tileToPixel(SCREEN_Y, prevMap.rows, prevMap.frogY);
 
-		clearObj(&frogImage32,&cityImage,xOff,yOff);
+		clearObj(&frogImage32,bg.backgrounds[bg.currentB],xOff,yOff);
 
 		// Drawing current frog
 		xOff = tileToPixel(SCREEN_X, gm.cols, gm.frogX);
