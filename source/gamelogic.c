@@ -9,10 +9,10 @@
 
 const int NUMB_LIVES = 3;
 const int START_TIME = 300;
-const int NUMB_MOVES = 100;
+const int NUMB_MOVES = 300;
 const int MAP_ROWS = 30;
 const int MAP_COLS = 30;
-const int H_OBJ = 15;
+const int H_OBJ = 10;
 
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
@@ -161,10 +161,12 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 			else
 			{
 				gs -> gameStage++;
-				gs -> map.frogY = MAP_ROWS - 1;
-				gs -> movesLeft--;
+				gs -> map.frogY = MAP_ROWS - 2;
 				gs -> score++;
 			}
+	}else if(gs -> gameStage != 0 && gs -> map.frogY == MAP_ROWS - 1){
+		gs -> gameStage--;
+		gs -> map.frogY = 1;
 	}
 
 	gs -> time = time(0) - startTime;

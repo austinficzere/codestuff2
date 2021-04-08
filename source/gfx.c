@@ -10,6 +10,8 @@
 #include "Resources/sprites/coinImg.c"
 #include "Resources/sprites/heartImg.c"
 #include "Resources/backgrounds/railroads.c"
+#include "Resources/HUD/HUDimages.c"
+#include "Resources/HUD/numbers.c"
 #include "global.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,6 +35,11 @@ struct ValuePacks {
 	int length;
 	const struct imageStruct *vp[];
 } vPacks = {8,{NULL,&heartImage,&coinImage,NULL,NULL,NULL,NULL,NULL}};
+
+struct NumbersImg{
+	int length;
+	const struct imageStruct *nums[];
+} NumberImages = {10,{&zeroImage,&oneImage,&twoImage,&threeImage,&fourImage,&fiveImage,&sixImage,&sevenImage,&eightImage,&nineImage}};
 
 struct harmObjectImg {
 	int length;
@@ -74,6 +81,14 @@ void drawGameState(struct gameState *prevState,struct gameState *gs)
 		bg.currentB = gs -> gameStage;
 		drawBackground(&bg);
 	}
+	for(int i = 0;i<NumberImages.length;i++){
+		draw((int *)NumberImages.nums[i] -> image_pixels,NumberImages.nums[i] -> width,NumberImages.nums[i] -> height,10+50*i,10, 0,TRANSPARENT);
+	}
+	/*
+	draw((int *)livesHUDImage.image_pixels,livesHUDImage.width,livesHUDImage.height,0,10, 0,TRANSPARENT);
+	draw((int *)stepsHUDImage.image_pixels,stepsHUDImage.width,stepsHUDImage.height,100,10, 0,TRANSPARENT);
+	draw((int *)scoreHUDImage.image_pixels,scoreHUDImage.width,scoreHUDImage.height,200,10, 0,TRANSPARENT);
+	*/
 	if(prevState -> score != gs -> score)
 		drawScore();
 	if(prevState -> time != gs -> time)
