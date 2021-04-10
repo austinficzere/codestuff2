@@ -84,7 +84,7 @@ int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 
 	else if (pauseState == 1 && isButtonPressed(button,A_BUTTON))
 	{
-		gs -> quit = 1;
+		gs -> state = 0;
 	}
 
 	else if (isButtonPressed(button,UP_BUTTON))
@@ -202,6 +202,7 @@ void setCurrToPrev(struct gameState *prev, struct gameState *curr){
 	prev -> hasWon = curr -> hasWon;
 	prev -> hasLost = curr -> hasLost;
 	prev -> gameStage = curr -> gameStage;
+	prev -> state = curr -> state;
 
 }
 

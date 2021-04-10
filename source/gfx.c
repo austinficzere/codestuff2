@@ -89,7 +89,8 @@ void initGFX(){
 
 void drawGameState(struct gameState *prevState,struct gameState *gs)
 {
-	if(prevState -> gameStage != gs -> gameStage){
+	int changeState = prevState -> state != gs -> state;
+	if((prevState -> gameStage != gs -> gameStage) || changeState){
 		bg.currentB = gs -> gameStage;
 		drawBackground(&bg);
 	}
@@ -176,7 +177,6 @@ void drawHUDItem(int prevNumber, int currNumber, int xOff, int yOff, int HUDtype
 void drawMenuScreen(struct gameState *prevState,struct gameState *gs, int menuState){
 	if(prevState -> state  != gs -> state){
 		draw((unsigned short int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
-    	prevState -> state = gs -> state;
     }
 
 	if(menuState == 0){
@@ -194,7 +194,6 @@ void drawPauseScreen(struct gameState *prevState,struct gameState *gs, int pause
 
 	if(prevState -> state  != gs -> state){
         draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
-        prevState -> state = gs -> state;
     }
 
 	if(pauseState == 0){

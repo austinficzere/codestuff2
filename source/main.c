@@ -39,13 +39,16 @@ int main(){
         wait(33333);
         if(gs.state == MENU_STATE)
         {
+
             drawMenuScreen(&prevState,&gs,currMenuState);
+	    prevState.state = gs.state;
             currMenuState = updateMenuScreen(&gs, cs -> controllerButton, currMenuState);
         }
         else if (gs.state == PAUSE_STATE)
         {
-            currPauseState = updatePauseScreen(&gs, cs -> controllerButton, currPauseState);
             drawPauseScreen(&prevState,&gs,currPauseState);
+	    prevState.state = gs.state;
+            currPauseState = updatePauseScreen(&gs, cs -> controllerButton, currPauseState);
         }else{
             drawGameState(&prevState,&gs);
             setCurrToPrev(&prevState, &gs);
