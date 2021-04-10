@@ -16,7 +16,7 @@ const int H_OBJ = 15;
 
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
-
+void spawnValuePacks(int sTime, struct gameState *gs);
 void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr);
 void updateHarmObjects(struct gameMap gm);
 int collides(int left1, int right1, const struct imageStruct *img1, int left2, int right2, const struct imageStruct *img2);
@@ -122,6 +122,8 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		gs -> state = 1;
 	}
 
+	spawnValuePacks(startTime, gs);
+
 	if(button!=NONE_PRESSED){
 		if (isButtonPressed(button,UP_BUTTON) && gs -> map.frogY>0)
 		{
@@ -150,6 +152,11 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 
 	// Check collision with harm object
+	if(gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack != 0){
+		int valueStand  = gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack;
+		// do stuff
+		gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack = 0;
+	}
 
 	if (gs -> map.frogY == 0)
 	{
@@ -241,7 +248,7 @@ struct gameMap initGameMap()
 	map.orientation = 0;
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
-			map.table[i][j].valuePack = randomNumb(0,3);
+			map.table[i][j].valuePack = 0;
 		}
 	}
 
@@ -312,10 +319,10 @@ void spawnValuePacks(int sTime, struct gameState *gs)
 {
 	int cTime = time(0) - sTime;
 	
-	if (cTime > 30)
+	if (cTime > 5)
 	{
-		int i = randomNumb(0, MAP_ROWS);
-		int j = randomNumb(0, MAP_COLS);
-		gs -> map.table[i][j].valuePack = randomNumb(1, 2);
+		int i = randomNumb(3, MAP_ROWS-3);
+		int j = randomNumb(0, MAP_COLS-1);
+		gs -> map.table[i][j].valuePack = randomNumb(1, 4);
 	}
 }

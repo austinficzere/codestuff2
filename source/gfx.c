@@ -10,6 +10,8 @@
 #include "Resources/menus/pauseSelector.c"
 #include "Resources/sprites/coinImg.c"
 #include "Resources/sprites/heartImg.c"
+#include "Resources/sprites/clockImg.c"
+#include "Resources/sprites/bootsImg.c"
 #include "Resources/HUD/HUDimages.c"
 #include "Resources/HUD/numbers.c"
 #include "Resources/sprites/bus.c"
@@ -37,7 +39,7 @@ struct Background {
 struct ValuePacks {
 	int length;
 	const struct imageStruct *vp[];
-} vPacks = {8,{NULL,&heartImage,&coinImage,NULL,NULL,NULL,NULL,NULL}};
+} vPacks = {8,{NULL,&heartImage,&coinImage,&clockImage, &bootsImage,}};
 
 struct NumbersImg{
 	int length;
@@ -136,18 +138,12 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 		for(int j = 0;j<gm.cols;j++){
 			xOff = tileToPixel(SCREEN_X, gm.cols, j);
 			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
-
-			if(prevMap.table[i][j].valuePack != gm.table[i][j].valuePack){
-					// draw new value pack
-				if (prevMap.table[i][j].valuePack == 0)
-				{
-					draw((int *)vPacks.vp[gm.table[i][j].valuePack].image_pixels, vPacks.vp[gm.table[i][j].valuePack].width, vPacks.vp[gm.table[i][j].valuePack].height,xOff,yOff,0,!TRANSPARENT);
-				}
-				// erase the value pack if it has been used
-				if (prevMap.table[i][j].valuePack != 0)
-				{
-					clearObj(&vPacks.vp[prevMap.table[i][j].valuePack],bg.backgrounds[bg.currentB],xOff,yOff);
-				}
+		
+			if (gm.table[i][j].valuePack!=0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack ){
+				draw((int *)vPacks.vp[gm.table[i][j].valuePack] -> image_pixels, vPacks.vp[gm.table[i][j].valuePack] -> width, 
+				vPacks.vp[gm.table[i][j].valuePack] -> height,xOff,yOff,0,TRANSPARENT);
+			}else if(gm.table[i][j].valuePack == 0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack ){
+				clearObj(vPacks.vp[prevMap.table[i][j].valuePack],bg.backgrounds[bg.currentB],xOff,yOff);
 			}
 		}
 	}
