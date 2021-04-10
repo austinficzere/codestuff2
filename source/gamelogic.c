@@ -10,7 +10,7 @@
 const int NUMB_LIVES = 3;
 const int START_TIME = 300;
 const int NUMB_MOVES = 300;
-const int MAP_ROWS = 30;
+const int MAP_ROWS = 20;
 const int MAP_COLS = 30;
 const int H_OBJ = 15;
 

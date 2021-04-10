@@ -136,13 +136,11 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 			xOff = tileToPixel(SCREEN_X, gm.cols, j);
 			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
 
-			if(gm.table[i][j].valuePack != 0){
-				if(prevMap.table[i][j].valuePack != gm.table[i][j].valuePack){
+			if(prevMap.table[i][j].valuePack != gm.table[i][j].valuePack){
 					// clear previous value
 					
 
 					// Draw current 
-				}
 			}
 		}
 	}
