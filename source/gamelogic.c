@@ -155,6 +155,23 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	if(gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack != 0){
 		int valueStand  = gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack;
 		// do stuff
+		if (valueStand == 1)
+		{
+			gs -> numbLives++;
+		}
+		else if (valueStand == 2)
+		{
+			gs -> score++;
+		}
+		else if (valueStand == 3)
+		{
+			gs -> time = (gs -> time) + 5;
+		}
+		else if (valueStand == 4)
+		{
+			gs -> movesLeft = (gs -> movesLeft) + 5;
+		}
+
 		gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack = 0;
 	}
 
