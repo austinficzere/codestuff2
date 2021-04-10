@@ -77,14 +77,12 @@ int updateMenuScreen(struct gameState *gs, int button, int menuState)
 
 int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 {
-	if (pauseState == 0 && isButtonPressed(button,A_BUTTON))
+	if ((pauseState == 0 || pauseState == 1) && isButtonPressed(button,A_BUTTON))
 	{
 		*gs = initGameState();
-	}
-
-	else if (pauseState == 1 && isButtonPressed(button,A_BUTTON))
-	{
-		gs -> state = 0;
+		if(pauseState == 0){
+			gs -> state = 2;
+		}
 	}
 
 	else if (isButtonPressed(button,UP_BUTTON))
@@ -336,7 +334,7 @@ void spawnValuePacks(int sTime, struct gameState *gs)
 {
 	int cTime = time(0) - sTime;
 	
-	if (cTime > 5)
+	if (cTime > 30)
 	{
 		int i = randomNumb(3, MAP_ROWS-3);
 		int j = randomNumb(0, MAP_COLS-1);

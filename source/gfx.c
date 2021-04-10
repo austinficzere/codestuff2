@@ -66,7 +66,7 @@ unsigned short int getPixel(int x, int y);
 void drawGameState(struct gameState *prevState,struct gameState *gs);
 void drawMenuScreen();
 void drawPauseScreen();
-void drawMap(struct gameMap prevMap, struct gameMap gm);
+void drawMap(struct gameMap prevMap, struct gameMap gm, int changeState);
 int tileToPixel();
 void initGFX();
 void drawSelector(const struct imageStruct *image, int xOff, int yOff);
@@ -105,7 +105,7 @@ void drawGameState(struct gameState *prevState,struct gameState *gs)
 	if(prevState -> movesLeft != gs -> movesLeft);
 		drawHUDItem(prevState -> movesLeft, gs -> movesLeft, 600,HUD_YOFF,HUD_STEPS);
 
-	drawMap(prevState -> map, gs -> map);
+	drawMap(prevState -> map, gs -> map, changeState);
 }
 
 void drawNumber(int xOff, int yOff, int number, int toClear){
@@ -130,7 +130,7 @@ void drawNumber(int xOff, int yOff, int number, int toClear){
 	}
 }
 
-void drawMap(struct gameMap prevMap, struct gameMap gm){
+void drawMap(struct gameMap prevMap, struct gameMap gm, int changeState){
 	// Loop through each tile and draw any value packs
 
 	int xOff,yOff;
@@ -139,10 +139,10 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 			xOff = tileToPixel(SCREEN_X, gm.cols, j);
 			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
 		
-			if (gm.table[i][j].valuePack!=0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack ){
+			if (gm.table[i][j].valuePack!=0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack){
 				draw((int *)vPacks.vp[gm.table[i][j].valuePack] -> image_pixels, vPacks.vp[gm.table[i][j].valuePack] -> width, 
 				vPacks.vp[gm.table[i][j].valuePack] -> height,xOff,yOff,0,TRANSPARENT);
-			}else if(gm.table[i][j].valuePack == 0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack ){
+			}else if(gm.table[i][j].valuePack == 0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack){
 				clearObj(vPacks.vp[prevMap.table[i][j].valuePack],bg.backgrounds[bg.currentB],xOff,yOff);
 			}
 		}
@@ -155,7 +155,7 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 	}
 
 	// Draw frog
-	if((prevMap.frogX != gm.frogX) || (prevMap.frogY != gm.frogY)){
+	if((prevMap.frogX != gm.frogX) || (prevMap.frogY != gm.frogY) || changeState){
 		// clear 
 		xOff = tileToPixel(SCREEN_X, prevMap.cols, prevMap.frogX);
 		yOff = tileToPixel(SCREEN_Y, prevMap.rows, prevMap.frogY);
