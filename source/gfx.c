@@ -137,10 +137,16 @@ void drawMap(struct gameMap prevMap, struct gameMap gm){
 			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
 
 			if(prevMap.table[i][j].valuePack != gm.table[i][j].valuePack){
-					// clear previous value
-					
-
-					// Draw current 
+					// draw new value pack
+				if (prevMap.table[i][j].valuePack == 0)
+				{
+					draw((int *)vPacks.vp[gm.table[i][j].valuePack].image_pixels, vPacks.vp[gm.table[i][j].valuePack].width, vPacks.vp[gm.table[i][j].valuePack].height,xOff,yOff,0,!TRANSPARENT);
+				}
+				// erase the value pack if it has been used
+				if (prevMap.table[i][j].valuePack != 0)
+				{
+					clearObj(&vPacks.vp[prevMap.table[i][j].valuePack],bg.backgrounds[bg.currentB],xOff,yOff);
+				}
 			}
 		}
 	}
