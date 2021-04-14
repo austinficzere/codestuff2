@@ -13,6 +13,8 @@ const int NUMB_MOVES = 300;
 const int MAP_ROWS = 20;
 const int MAP_COLS = 30;
 const int H_OBJ = 15;
+const int NUMB_OF_STAGES = 4;
+const int ITEM_SPAWN_DIFF = 3;
 
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
@@ -21,7 +23,7 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr);
 void updateHarmObjects(struct gameMap gm);
 int collides(int left1, int right1, const struct imageStruct *img1, int left2, int right2, const struct imageStruct *img2);
 
-int frogCollideHarm(struct gameMap gm);
+int frogCollideHarm(struct gameMap gm, int frogX, int frogY);
 
 
 struct Tile **createTable(int rows, int cols)
@@ -108,14 +110,14 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		return;
 	}
 
-	if(frogCollideHarm(gs -> map)){
+	if(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)){
 		gs -> numbLives--;
-		gs -> map.frogX = gs -> map.cols/2;
-		gs -> map.frogY = gs -> map.rows-2;
+		gs -> frogX = MAP_COLS/2;
+		gs -> frogY = MAP_ROWS-2;
 	}
 
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
-	updateHarmObjects(gs -> map);
+	updateHarmObjects(gs -> map[gs -> gameStage]);
 	if (isButtonPressed(button,START_BUTTON)){
 		gs -> state = 1;
 	}
@@ -123,35 +125,35 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	spawnValuePacks(startTime, gs);
 
 	if(button!=NONE_PRESSED){
-		if (isButtonPressed(button,UP_BUTTON) && gs -> map.frogY>0)
+		if (isButtonPressed(button,UP_BUTTON) && gs -> frogY>0)
 		{
-			gs -> map.orientation = 0;
-			gs -> map.frogY--;
+			gs -> orientation = 0;
+			gs -> frogY--;
 			gs -> movesLeft--;
 		}
-		if (isButtonPressed(button,DOWN_BUTTON) && gs -> map.frogY<MAP_ROWS-1)
+		if (isButtonPressed(button,DOWN_BUTTON) && gs -> frogY<MAP_ROWS-1)
 		{
-			gs -> map.orientation = 2;
-			gs -> map.frogY++;
+			gs -> orientation = 2;
+			gs -> frogY++;
 			gs -> movesLeft--;
 		}
-		if (isButtonPressed(button,LEFT_BUTTON) && gs -> map.frogX>0)
+		if (isButtonPressed(button,LEFT_BUTTON) && gs -> frogX>0)
 		{
-			gs -> map.orientation = 3;
-			gs -> map.frogX--;
+			gs -> orientation = 3;
+			gs -> frogX--;
 			gs -> movesLeft--;
 		}
-		if (isButtonPressed(button,RIGHT_BUTTON) && gs -> map.frogX<MAP_COLS)
+		if (isButtonPressed(button,RIGHT_BUTTON) && gs -> frogX<MAP_COLS)
 		{
-			gs -> map.orientation = 1;
-			gs -> map.frogX++;
+			gs -> orientation = 1;
+			gs -> frogX++;
 			gs -> movesLeft--;
 		}
 	}
 
 	// Check collision with harm object
-	if(gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack != 0){
-		int valueStand  = gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack;
+	if(gs -> map[gs -> gameStage].table[gs -> frogY][gs -> frogX].valuePack != 0){
+		int valueStand  = gs -> map[gs -> gameStage].table[gs -> frogY][gs -> frogX].valuePack;
 		// do stuff
 		if (valueStand == 1)
 		{
@@ -170,10 +172,10 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 			gs -> movesLeft = (gs -> movesLeft) + 5;
 		}
 
-		gs -> map.table[gs -> map.frogY][gs -> map.frogX].valuePack = 0;
+		gs -> map[gs -> gameStage].table[gs -> frogY][gs -> frogX].valuePack = 0;
 	}
 
-	if (gs -> map.frogY == 0)
+	if (gs -> frogY == 0)
 	{
 		if (gs -> gameStage == 3)
 			{
@@ -183,12 +185,12 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 			else
 			{
 				gs -> gameStage++;
-				gs -> map.frogY = MAP_ROWS - 2;
+				gs -> frogY = MAP_ROWS - 2;
 				gs -> score++;
 			}
-	}else if(gs -> gameStage != 0 && gs -> map.frogY == MAP_ROWS - 1){
+	}else if(gs -> gameStage != 0 && gs -> frogY == MAP_ROWS -1){
 		gs -> gameStage--;
-		gs -> map.frogY = 1;
+		gs -> frogY = 1;
 	}
 
 	gs -> time = time(0) - startTime;
@@ -196,10 +198,6 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 }
 
 void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
-	prev -> frogX = curr -> frogX;
-	prev -> frogY = curr -> frogY;
-	prev -> orientation = curr -> orientation;
-
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
 			prev -> table[i][j] = copyTile(curr -> table[i][j]);
@@ -207,6 +205,7 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
 	}
 
 	for(int i = 0;i<curr -> numbOfHarm;i++){
+		prev -> hObjs[i].img = curr -> hObjs[i].img;
 		prev -> hObjs[i].drawX = curr -> hObjs[i].drawX;
 		prev -> hObjs[i].drawY = curr -> hObjs[i].drawY;
 		prev -> hObjs[i].speed= curr -> hObjs[i].speed;
@@ -215,7 +214,12 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
 
 void setCurrToPrev(struct gameState *prev, struct gameState *curr){
 
-	setCurrToPrevMap(&(prev -> map), &(curr -> map));
+	for(int i = 0;i<NUMB_OF_STAGES;i++){
+		setCurrToPrevMap(&(prev -> map[i]), &(curr -> map[i]));
+	}
+	prev -> frogX = curr -> frogX;
+	prev -> frogY = curr -> frogY;
+	prev -> orientation = curr -> orientation;
 	prev -> score = curr -> score;
 	prev -> numbLives = curr -> numbLives;
 	prev -> time = curr -> time;
@@ -232,35 +236,46 @@ int randomNumb(int lowerBound, int upperBound){
 	return (rand() % (upperBound-lowerBound+1)) +lowerBound;
 }
 
-void initHarmObjects(struct harmObject *hObjs, int numbOfHarm){
+void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
+	int low;
+	int high;
+	if(gameStage == 0){
+		low = 0;
+		high = 1;
+	}else if(gameStage == 1){
+		low = 2;
+		high = 3;
+	}else if(gameStage == 2){
+		low = 4;
+		high = 4;
+	}else{
+		low = 1;
+		high = 1;
+	}
+
 	for(int i = 0;i<numbOfHarm;i++){
-		hObjs[i].img = &busImage;
+		hObjs[i].img = hObjImg.imgs[randomNumb(low,high)];
 		hObjs[i].speed = randomNumb(1,20);
 		hObjs[i].drawY = randomNumb(100,SCREEN_Y-100);
-		hObjs[i].orientation = (randomNumb(0,1) ? 0 : 2);
-		if(hObjs[i].orientation == 2){
+		hObjs[i].orientation = (randomNumb(0,1) ? 0 : -1);
+		if(hObjs[i].orientation == -1){
 			hObjs[i].speed = -(hObjs[i].speed);
-			hObjs[i].drawX = SCREEN_X-(hObjs[i].img -> width);
-		}else{
-			hObjs[i].drawX = 0;
 		}
+		hObjs[i].drawX = randomNumb(0,SCREEN_X);
 	}	
 }
 
-struct gameMap initGameMap()
+struct gameMap initGameMap(int gameStage)
 {
 	struct gameMap map;
 	map.table = createTable(MAP_ROWS,MAP_COLS);
 
 	map.hObjs = malloc(H_OBJ * sizeof(struct harmObject));
-	initHarmObjects(map.hObjs,H_OBJ);
+	initHarmObjects(map.hObjs,H_OBJ, gameStage);
 	map.numbOfHarm = H_OBJ;
-		
+	map.lastItemSpawn = time(0);
 	map.rows = MAP_ROWS;
 	map.cols = MAP_COLS;
-	map.frogX = map.cols/2;
-	map.frogY = map.rows-2;
-	map.orientation = 0;
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
 			map.table[i][j].valuePack = 0;
@@ -273,7 +288,12 @@ struct gameMap initGameMap()
 struct gameState initGameState()
 {
 	struct gameState gs;
-	gs.map = initGameMap();
+	for(int i = 0;i<NUMB_OF_STAGES;i++){
+		gs.map[i] = initGameMap(i);
+	}
+	gs.frogX = MAP_ROWS/2;
+	gs.frogY = MAP_ROWS-2;
+	gs.orientation = 0;
 	gs.score = 0;
 	gs.numbLives = NUMB_LIVES;
 	gs.time = START_TIME;
@@ -289,7 +309,7 @@ struct gameState initGameState()
 void updateHarmObjects(struct gameMap gm){
 	for(int i = 0;i<gm.numbOfHarm;i++){
 		gm.hObjs[i].drawX = gm.hObjs[i].drawX + gm.hObjs[i].speed;
-		if(gm.hObjs[i].drawX<0){
+		if(gm.hObjs[i].drawX + gm.hObjs[i].img -> width<0){
 			gm.hObjs[i].drawX = SCREEN_X-(gm.hObjs[i].img -> width);
 		}else if(gm.hObjs[i].drawX >= SCREEN_X){
 			gm.hObjs[i].drawX = 0;
@@ -309,9 +329,9 @@ void  *harm_obj_thread(void *arg){
 	}
 }
 
-int frogCollideHarm(struct gameMap gm){
-	int xOff = tileToPixel(SCREEN_X, gm.cols, gm.frogX);
-	int yOff = tileToPixel(SCREEN_Y, gm.rows, gm.frogY);
+int frogCollideHarm(struct gameMap gm, int frogX, int frogY){
+	int xOff = tileToPixel(SCREEN_X, gm.cols, frogX);
+	int yOff = tileToPixel(SCREEN_Y, gm.rows, frogY);
 	for(int i = 0;i<gm.numbOfHarm;i++){
 		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img)){
 			return 1;
@@ -333,11 +353,13 @@ int collides(int x1, int y1, const struct imageStruct *img1, int x2, int y2, con
 void spawnValuePacks(int sTime, struct gameState *gs)
 {
 	int cTime = time(0) - sTime;
+	int spawnDiff = time(0) - gs -> map[gs -> gameStage].lastItemSpawn;
 	
-	if (cTime > 30)
+	if (cTime > 30 && spawnDiff > ITEM_SPAWN_DIFF)
 	{
 		int i = randomNumb(3, MAP_ROWS-3);
 		int j = randomNumb(0, MAP_COLS-1);
-		gs -> map.table[i][j].valuePack = randomNumb(1, 4);
+		gs -> map[gs -> gameStage].table[i][j].valuePack = randomNumb(1, 4);
+		gs -> map[gs -> gameStage].lastItemSpawn = time(0);
 	}
 }

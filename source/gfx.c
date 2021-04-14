@@ -16,13 +16,16 @@
 #include "Resources/HUD/numbers.c"
 #include "Resources/sprites/bus.c"
 #include "Resources/sprites/bus2.c"
+#include "Resources/sprites/train.c"
+#include "Resources/sprites/plane.c"
+#include "Resources/sprites/person.c"
+#include "gfx.h"
 #include "global.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
 #include "framebuffer.h"
 #include <unistd.h>
-#include "gamelogic.h"
 #include <math.h>
 
 typedef struct {
@@ -51,19 +54,16 @@ struct HUDImg{
 	const struct imageStruct *itemImgs[];
 } HUDImages = {4,{&livesHUDImage,&scoreHUDImage,&stepsHUDImage,&timeHUDImage}};
 
-struct harmObjectImg {
-	int length;
-	const struct imageStruct *imgs[]
-} hObjImg = {2,{&busImage,&bus2Image}};
+struct harmObjectImg hObjImg = {5,{&busImage,&bus2Image,&trainImage,&personImage,&planeImage}};
 
 struct fbs framebufferstruct;
+
 
 void drawPixel(Pixel *pixel); 
 void draw(int *pixels, int width, int height, int xOff, int yOff, int orientation, int transparent);
 void clearObj(const struct imageStruct *img, const struct imageStruct *rplc, int xOff, int yOff);
 void drawBackground(struct Background *bg);
 unsigned short int getPixel(int x, int y);
-void drawGameState(struct gameState *prevState,struct gameState *gs);
 void drawMenuScreen();
 void drawPauseScreen();
 void drawMap(struct gameMap prevMap, struct gameMap gm, int changeState);
@@ -72,6 +72,7 @@ void initGFX();
 void drawSelector(const struct imageStruct *image, int xOff, int yOff);
 void drawNumber(int xOff, int yOff, int number, int toClear);
 void drawHUDItem(int prevNumber, int currNumber, int xOff, int yOff, int HUDtype);
+void drawFrog(struct gameState *prevState, struct gameState *gs);
 
 const int SCREEN_X = 1280;
 const int SCREEN_Y = 720;
@@ -89,7 +90,7 @@ void initGFX(){
 	framebufferstruct = initFbInfo();
 }
 
-void drawGameState(struct gameState *prevState,struct gameState *gs)
+void drawGameState(struct gameState *prevState, struct gameState *gs)
 {
 	int changeState = prevState -> state != gs -> state;
 	if((prevState -> gameStage != gs -> gameStage) || changeState){
@@ -105,7 +106,10 @@ void drawGameState(struct gameState *prevState,struct gameState *gs)
 	if(prevState -> movesLeft != gs -> movesLeft);
 		drawHUDItem(prevState -> movesLeft, gs -> movesLeft, 600,HUD_YOFF,HUD_STEPS);
 
-	drawMap(prevState -> map, gs -> map, changeState);
+	drawMap(prevState -> map[prevState -> gameStage], gs -> map[gs -> gameStage], changeState);
+	if((prevState -> frogX != gs -> frogX) || (prevState -> frogY != gs -> frogY) || changeState){
+		drawFrog(prevState,gs);
+	}
 }
 
 void drawNumber(int xOff, int yOff, int number, int toClear){
@@ -130,23 +134,21 @@ void drawNumber(int xOff, int yOff, int number, int toClear){
 	}
 }
 
+void drawFrog(struct gameState *prevState, struct gameState *gs){
+		// clear 
+		int xOff = tileToPixel(SCREEN_X, prevState -> map[prevState -> gameStage].cols, prevState -> frogX);
+		int yOff = tileToPixel(SCREEN_Y, prevState -> map[prevState -> gameStage].rows, prevState -> frogY);
+
+		clearObj(&frogImage32,bg.backgrounds[bg.currentB],xOff,yOff);
+
+		// Drawing current frog
+		xOff = tileToPixel(SCREEN_X, gs -> map[prevState -> gameStage].cols, gs -> frogX);
+		yOff = tileToPixel(SCREEN_Y, gs -> map[prevState -> gameStage].rows, gs -> frogY);
+		draw((int *)frogImage32.image_pixels,frogImage32.width,frogImage32.height,xOff,yOff, gs -> orientation,TRANSPARENT);
+}
+
 void drawMap(struct gameMap prevMap, struct gameMap gm, int changeState){
 	// Loop through each tile and draw any value packs
-
-	int xOff,yOff;
-	for(int i = 0;i<gm.rows;i++){
-		for(int j = 0;j<gm.cols;j++){
-			xOff = tileToPixel(SCREEN_X, gm.cols, j);
-			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
-		
-			if (gm.table[i][j].valuePack!=0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack){
-				draw((int *)vPacks.vp[gm.table[i][j].valuePack] -> image_pixels, vPacks.vp[gm.table[i][j].valuePack] -> width, 
-				vPacks.vp[gm.table[i][j].valuePack] -> height,xOff,yOff,0,TRANSPARENT);
-			}else if(gm.table[i][j].valuePack == 0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack){
-				clearObj(vPacks.vp[prevMap.table[i][j].valuePack],bg.backgrounds[bg.currentB],xOff,yOff);
-			}
-		}
-	}
 
 	for(int i = 0;i<gm.numbOfHarm;i++){
 		clearObj(prevMap.hObjs[i].img,bg.backgrounds[bg.currentB],prevMap.hObjs[i].drawX,prevMap.hObjs[i].drawY);
@@ -154,20 +156,20 @@ void drawMap(struct gameMap prevMap, struct gameMap gm, int changeState){
 		draw( (int *)currImg -> image_pixels,currImg -> width, currImg -> height, gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].orientation,TRANSPARENT);
 	}
 
-	// Draw frog
-	if((prevMap.frogX != gm.frogX) || (prevMap.frogY != gm.frogY) || changeState){
-		// clear 
-		xOff = tileToPixel(SCREEN_X, prevMap.cols, prevMap.frogX);
-		yOff = tileToPixel(SCREEN_Y, prevMap.rows, prevMap.frogY);
-
-		clearObj(&frogImage32,bg.backgrounds[bg.currentB],xOff,yOff);
-
-		// Drawing current frog
-		xOff = tileToPixel(SCREEN_X, gm.cols, gm.frogX);
-		yOff = tileToPixel(SCREEN_Y, gm.rows, gm.frogY);
-		draw((int *)frogImage32.image_pixels,frogImage32.width,frogImage32.height,xOff,yOff, gm.orientation,TRANSPARENT);
+	int xOff,yOff;
+	for(int i = 0;i<gm.rows;i++){
+		for(int j = 0;j<gm.cols;j++){
+			xOff = tileToPixel(SCREEN_X, gm.cols, j);
+			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
+		
+			if (gm.table[i][j].valuePack!=0){
+				draw((int *)vPacks.vp[gm.table[i][j].valuePack] -> image_pixels, vPacks.vp[gm.table[i][j].valuePack] -> width, 
+				vPacks.vp[gm.table[i][j].valuePack] -> height,xOff,yOff,0,TRANSPARENT);
+			}else if(gm.table[i][j].valuePack == 0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack){
+				clearObj(vPacks.vp[prevMap.table[i][j].valuePack],bg.backgrounds[bg.currentB],xOff,yOff);
+			}
+		}
 	}
-
 }
 
 void drawHUDItem(int prevNumber, int currNumber, int xOff, int yOff, int HUDtype){
@@ -178,7 +180,7 @@ void drawHUDItem(int prevNumber, int currNumber, int xOff, int yOff, int HUDtype
 
 void drawMenuScreen(struct gameState *prevState,struct gameState *gs, int menuState){
 	if(prevState -> state  != gs -> state){
-		draw((unsigned short int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
+		draw((int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
     }
 
 	if(menuState == 0){
@@ -199,10 +201,10 @@ void drawPauseScreen(struct gameState *prevState,struct gameState *gs, int pause
     }
 
 	if(pauseState == 0){
-		//clearObj(&pauseSelector, &pauseMenuImage, 574, 423);
+		clearObj(&pauseSelector, &pauseMenuImage, 574, 423);
 		drawSelector(&pauseSelector, 574, 363);
 	}else{
-		//clearObj(&pauseSelector, &pauseMenuImage, 574, 363);
+		clearObj(&pauseSelector, &pauseMenuImage, 574, 363);
 		drawSelector(&pauseSelector, 574, 423);
 	}
 
@@ -226,8 +228,16 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 	int ySet,yEnd,yInc;
 
 	int flip = 0;
-	
-	if(orientation == 0){
+	if(orientation == -1){
+		xSet = width -1;
+		ySet = 0;
+		xInc = -1;
+		yInc = 1;
+
+		xEnd = -1;
+		yEnd = height;
+	}
+	else if(orientation == 0){
 		xSet = ySet = 0;
 		xInc = yInc = 1;
 

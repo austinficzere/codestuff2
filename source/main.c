@@ -26,34 +26,30 @@ int main(){
 
     struct gameState gs = initGameState();
     struct gameState prevState = initGameState();
-    prevState.gameStage = 5;
-    prevState.map.frogX = 0;
-    prevState.state = 10;
+    prevState.state = -1;
 
     initGFX();
 
     int currMenuState = 0;
     int currPauseState = 0;
-
+    
     while(!gs.quit){
         wait(33333);
         if(gs.state == MENU_STATE)
         {
-
             drawMenuScreen(&prevState,&gs,currMenuState);
-	    prevState.state = gs.state;
+	        prevState.state = gs.state;
             currMenuState = updateMenuScreen(&gs, cs -> controllerButton, currMenuState);
         }
         else if (gs.state == PAUSE_STATE)
         {
             drawPauseScreen(&prevState,&gs,currPauseState);
-	    prevState.state = gs.state;
+	        prevState.state = gs.state;
             currPauseState = updatePauseScreen(&gs, cs -> controllerButton, currPauseState);
         }else{
             drawGameState(&prevState,&gs);
             setCurrToPrev(&prevState, &gs);
        	    updateGameState(&gs, cs -> controllerButton, sTime);
-            //spawnValuePacks(sTime, &gs);
         }
         // update gamestate
 

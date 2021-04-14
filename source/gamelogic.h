@@ -26,17 +26,17 @@ struct harmObject
 struct gameMap
 {
 	int rows,cols;
-	int orientation;
-	int frogX,frogY;
 	int numbOfHarm;
+	int lastItemSpawn;
 	struct harmObject *hObjs;
 	struct Tile **table;	
 };
 
 struct gameState
 {
-	struct gameMap map;
-
+	struct gameMap map[4];
+	int orientation;
+	int frogX,frogY;
 	int score;
 	int numbLives;
 	int time;

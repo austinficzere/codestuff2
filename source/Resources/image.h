@@ -5,6 +5,6 @@ static const struct imageStruct{
   unsigned int		width;
   unsigned int		height;
   unsigned char		image_pixels[];
-}; 
+};
 
 #endif
