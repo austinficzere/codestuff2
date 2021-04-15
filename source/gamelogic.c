@@ -116,7 +116,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		gs -> frogY = MAP_ROWS-2;
 	}
 
-	if(!frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY) && gs -> gameStage == 4 && gs -> frogY < MAP_ROWS && gs -> frogY > 2){
+	if(!frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY) && gs -> gameStage == 4 && gs -> frogY < MAP_ROWS - 2 && gs -> frogY > 2){
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
