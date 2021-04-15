@@ -73,7 +73,10 @@ Checks if the game is over, so either the lives/time/movesLeft are 0, or we have
 */
 int isGameEnd(struct gameState *gs)
 {
-	if(gs->numbLives == 0 || gs->time == 0 || gs -> movesLeft == 0 || gs -> hasWon || gs -> hasLost || gs -> quit){
+	if(gs -> hasWon)
+		return 1;
+	else if(gs->numbLives == 0 || gs->time == 0 || gs -> movesLeft == 0 || gs -> hasLost || gs -> quit){
+		gs -> hasLost = 1;
 		return 1;	
 	}
 	return 0;
@@ -88,6 +91,12 @@ int isGameEnd(struct gameState *gs)
 Updates the menu screen and checks if we have switched the button selected or if the user has pressed one of the
 buttons.
 */
+int updateEndScreen(struct gameState *gs, int button){
+	if(button != NONE_PRESSED){
+		*gs = initGameState();
+	}
+}
+
 int updateMenuScreen(struct gameState *gs, int button, int menuState)
 {
 	// if we are selecting play and they press A
@@ -163,23 +172,24 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 {
 	// check if game is over
 	if (isGameEnd(gs)){
-		gs ->  quit = 1;
-		printf("hello");
-		return;
+		gs -> state = 3;
 	}
 
 	// check if the frog collided and repawn if they did
-	if(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY) && gs -> gameStage != 4){
+	if(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)){
+
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
 	}
 
-	if(!frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY) && gs -> gameStage == 4 && gs -> frogY < MAP_ROWS - 2 && gs -> frogY > 2){
+	/*
+	if(!(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)) && gs -> gameStage == 3 && gs -> frogY < MAP_ROWS - 2 && gs -> frogY > 2){
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
 	}
+	*/
 
 	// update harm objects
 	updateHarmObjects(gs -> map[gs -> gameStage]);

@@ -10,6 +10,7 @@
 const int MENU_STATE = 0;
 const int PAUSE_STATE = 1;
 const int GAME_STATE = 2;
+const int END_STATE = 3;
 
 int main(){
     int sTime = time(0);
@@ -46,7 +47,12 @@ int main(){
             drawPauseScreen(&prevState,&gs,currPauseState);
 	        prevState.state = gs.state;
             currPauseState = updatePauseScreen(&gs, cs -> controllerButton, currPauseState);
-        }else{
+        }else if (gs.state == END_STATE){
+            drawWinLoseScreen(&prevState,&gs);
+            prevState.state = gs.state;
+            updateEndScreen(&gs, cs -> controllerButton);
+        }
+        else {
             drawGameState(&prevState,&gs);
             setCurrToPrev(&prevState, &gs);
        	    updateGameState(&gs, cs -> controllerButton, sTime);
