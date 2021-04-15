@@ -97,14 +97,11 @@ void drawGameState(struct gameState *prevState, struct gameState *gs)
 		bg.currentB = gs -> gameStage;
 		drawBackground(&bg);
 	}
-	if(prevState -> score != gs -> score);
-		drawHUDItem(prevState -> score, gs -> score, 10, HUD_YOFF ,HUD_SCORE);
-	if(prevState -> time != gs -> time);
-		drawHUDItem(prevState -> time, gs -> time, 200,HUD_YOFF,HUD_TIME);
-	if(prevState -> numbLives != gs -> numbLives);
-		drawHUDItem(prevState -> numbLives, gs -> numbLives, 400,HUD_YOFF, HUD_LIVES);
-	if(prevState -> movesLeft != gs -> movesLeft);
-		drawHUDItem(prevState -> movesLeft, gs -> movesLeft, 600,HUD_YOFF,HUD_STEPS);
+	
+	drawHUDItem(prevState -> score, gs -> score, 10, HUD_YOFF ,HUD_SCORE);
+	drawHUDItem(prevState -> time, gs -> time, 200,HUD_YOFF,HUD_TIME);
+	drawHUDItem(prevState -> numbLives, gs -> numbLives, 400,HUD_YOFF, HUD_LIVES);
+	drawHUDItem(prevState -> movesLeft, gs -> movesLeft, 600,HUD_YOFF,HUD_STEPS);
 
 	drawMap(prevState -> map[prevState -> gameStage], gs -> map[gs -> gameStage], changeState);
 	if((prevState -> frogX != gs -> frogX) || (prevState -> frogY != gs -> frogY) || changeState){
