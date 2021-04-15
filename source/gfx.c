@@ -6,6 +6,8 @@
 #include "Resources/backgrounds/river.c"
 #include "Resources/menus/pauseMenu.c"
 #include "Resources/menus/startMenu.c"
+#include "Resources/menus/loseMenu.c"
+#include "Resources/menus/winMenu.c"
 #include "Resources/menus/menuSelector.c"
 #include "Resources/menus/pauseSelector.c"
 #include "Resources/sprites/coinImg.c"
@@ -88,6 +90,20 @@ const int HUD_YOFF = 10;
 
 void initGFX(){
 	framebufferstruct = initFbInfo();
+}
+
+void drawWinLoseScreen(struct gameState *prevState,struct gameState *gs){
+	int xOff = (SCREEN_X/2) - (winMenuImage.width/2);
+	int yOff = (SCREEN_Y/2) - (winMenuImage.height/2);
+
+	if(prevState -> state  != gs -> state){
+		if(gs -> hasWon){
+			draw((int *)winMenuImage.image_pixels, winMenuImage.width, winMenuImage.height,xOff,yOff,0,!TRANSPARENT);
+		} else if(gs -> hasLost){
+			draw((int *)loseMenuImage.image_pixels, loseMenuImage.width, loseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
+		}
+		drawNumber(100,100,gs -> score,!TO_CLEAR);
+    }
 }
 
 void drawGameState(struct gameState *prevState, struct gameState *gs)

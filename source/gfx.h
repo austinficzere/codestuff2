@@ -19,6 +19,7 @@ void drawGameState(struct gameState *prevState, struct gameState *gs);
 void initGFX();
 void drawMenuScreen();
 void drawPauseScreen();
+void drawWinLoseScreen(struct gameState *prevState,struct gameState *gs);
 int tileToPixel(int totalPixelLength, int totalTileLength, int currVal);
 
 const int SCREEN_X;
