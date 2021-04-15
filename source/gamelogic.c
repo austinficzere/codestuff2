@@ -309,8 +309,10 @@ struct gameState initGameState()
 void updateHarmObjects(struct gameMap gm){
 	for(int i = 0;i<gm.numbOfHarm;i++){
 		gm.hObjs[i].drawX = gm.hObjs[i].drawX + gm.hObjs[i].speed;
-		if(gm.hObjs[i].drawX + gm.hObjs[i].img -> width<0){
+		int width = gm.hObjs[i].img -> width;
+		if(gm.hObjs[i].drawX + width<0){
 			gm.hObjs[i].drawX = SCREEN_X-(gm.hObjs[i].img -> width);
+
 		}else if(gm.hObjs[i].drawX >= SCREEN_X){
 			gm.hObjs[i].drawX = 0;
 		}
