@@ -21,6 +21,8 @@
 #include "Resources/sprites/train.c"
 #include "Resources/sprites/plane.c"
 #include "Resources/sprites/person.c"
+#include "Resources/sprites/log.c"
+#include "Resources/sprites/pad.c"
 #include "gfx.h"
 #include "global.h"
 #include <stdio.h>
@@ -56,7 +58,7 @@ struct HUDImg{
 	const struct imageStruct *itemImgs[];
 } HUDImages = {4,{&livesHUDImage,&scoreHUDImage,&stepsHUDImage,&timeHUDImage}};
 
-struct harmObjectImg hObjImg = {5,{&busImage,&bus2Image,&trainImage,&personImage,&planeImage}};
+struct harmObjectImg hObjImg = {7,{&busImage,&bus2Image,&trainImage,&personImage,&planeImage,&logImage,&padImage}};
 
 struct fbs framebufferstruct;
 

@@ -117,19 +117,18 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		gs -> state = 3;
 	}
 
-	if(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)){
+	if(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY) && gs -> gameStage != 3){
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
 	}
 
-	/*
 	if(!(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)) && gs -> gameStage == 3 && gs -> frogY < MAP_ROWS - 2 && gs -> frogY > 2){
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
 	}
-	*/
+
 
 	// deal with quit, which we check if we are in stage -1, and they press A on correct button
 	updateHarmObjects(gs -> map[gs -> gameStage]);
@@ -264,8 +263,8 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 		low = 4;
 		high = 4;
 	}else{
-		low = 1;
-		high = 1;
+		low = 5;
+		high = 6;
 	}
 
 	for(int i = 0;i<numbOfHarm;i++){
