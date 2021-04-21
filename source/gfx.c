@@ -122,7 +122,7 @@ void drawGameState(struct gameState *prevState, struct gameState *gs)
 	drawHUDItem(prevState -> movesLeft, gs -> movesLeft, 600,HUD_YOFF,HUD_STEPS);
 
 	drawMap(prevState -> map[prevState -> gameStage], gs -> map[gs -> gameStage], changeState);
-	if((prevState -> frogX != gs -> frogX) || (prevState -> frogY != gs -> frogY) || changeState){
+	if((prevState -> frogX != gs -> frogX) || (prevState -> frogY != gs -> frogY) || changeState || gs -> gameStage == 3){
 		drawFrog(prevState,gs);
 	}
 }

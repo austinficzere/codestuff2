@@ -33,6 +33,7 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr);
 void updateHarmObjects(struct gameMap gm);
 int collides(int left1, int right1, const struct imageStruct *img1, int left2, int right2, const struct imageStruct *img2);
 int frogCollideHarm(struct gameMap gm, int frogX, int frogY);
+int updateFrogStage(struct gameMap gm, int frogX, int frogY);
 
 /*
 @Params: 
@@ -185,6 +186,9 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
+	}else if(gs -> gameStage == 3){
+		int updateX = updateFrogStage(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY);
+		gs -> frogX = updateX;
 	}
 
 
@@ -277,6 +281,21 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 
 }
 
+int updateFrogStage(struct gameMap gm, int frogX, int frogY){
+	int xOff = tileToPixel(SCREEN_X, gm.cols, frogX);
+	int yOff = tileToPixel(SCREEN_Y, gm.rows, frogY);
+	for(int i = 0;i<gm.numbOfHarm;i++){
+		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img) && !collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX + gm.hObjs[i].speed,gm.hObjs[i].drawY,gm.hObjs[i].img) ){
+			if(gm.hObjs[i].speed<0){
+				frogX--;
+			}else{
+				frogX++;
+			}
+		}
+	}
+	return frogX;
+}
+
 /*
 @Params: 
         prev: a pointer to the previous game map
@@ -361,11 +380,22 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 		low = 5;
 		high = 6;
 	}
-
+	int count = 2;
 	for(int i = 0;i<numbOfHarm;i++){
 		hObjs[i].img = hObjImg.imgs[randomNumb(low,high)];
-		hObjs[i].speed = randomNumb(1,20);
-		hObjs[i].drawY = randomNumb(100,SCREEN_Y-100);
+		if(gameStage == 3){
+			hObjs[i].speed = randomNumb(1,5);
+		}else{
+			hObjs[i].speed = randomNumb(1,20);
+		}
+		if(gameStage == 3){
+			hObjs[i].drawY = tileToPixel(SCREEN_Y,MAP_ROWS,count);
+			count++;
+			if(count == 18)
+				count = 2;
+		}else{
+			hObjs[i].drawY = randomNumb(100,SCREEN_Y-110);
+		}
 		hObjs[i].orientation = (randomNumb(0,1) ? 0 : -1);
 		if(hObjs[i].orientation == -1){
 			hObjs[i].speed = -(hObjs[i].speed);
@@ -385,9 +415,15 @@ struct gameMap initGameMap(int gameStage)
 	struct gameMap map;
 	map.table = createTable(MAP_ROWS,MAP_COLS);
 
-	map.hObjs = malloc(H_OBJ * sizeof(struct harmObject));
-	initHarmObjects(map.hObjs,H_OBJ, gameStage);
-	map.numbOfHarm = H_OBJ;
+	if(gameStage != 3){
+		map.hObjs = malloc(H_OBJ * sizeof(struct harmObject));
+		initHarmObjects(map.hObjs,H_OBJ, gameStage);
+		map.numbOfHarm = H_OBJ;
+	} else{
+		map.hObjs = malloc(18 * sizeof(struct harmObject));
+		initHarmObjects(map.hObjs,18, gameStage);
+		map.numbOfHarm = 18;
+	}
 	map.lastItemSpawn = time(0);
 	map.rows = MAP_ROWS;
 	map.cols = MAP_COLS;
