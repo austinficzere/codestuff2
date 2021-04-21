@@ -4,6 +4,7 @@
 #ifndef GFX_H_INCLUDED
 #define GFX_H_INCLUDED
 
+// define structs
 const struct imageStruct frogImage32; 
 const struct imageStruct startMenuImage;
 const struct imageStruct pauseMenuImage;
@@ -15,6 +16,7 @@ struct harmObjectImg {
 
 struct harmObjectImg hObjImg;
 
+// define functions
 void drawGameState(struct gameState *prevState, struct gameState *gs);
 void initGFX();
 void drawMenuScreen();
@@ -22,6 +24,7 @@ void drawPauseScreen();
 void drawWinLoseScreen(struct gameState *prevState,struct gameState *gs);
 int tileToPixel(int totalPixelLength, int totalTileLength, int currVal);
 
+// define constants
 const int SCREEN_X;
 const int SCREEN_Y;
 
