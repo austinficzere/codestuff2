@@ -285,11 +285,13 @@ int updateFrogStage(struct gameMap gm, int frogX, int frogY){
 	int xOff = tileToPixel(SCREEN_X, gm.cols, frogX);
 	int yOff = tileToPixel(SCREEN_Y, gm.rows, frogY);
 	for(int i = 0;i<gm.numbOfHarm;i++){
-		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img) && !collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX + gm.hObjs[i].speed,gm.hObjs[i].drawY,gm.hObjs[i].img) ){
-			if(gm.hObjs[i].speed<0){
-				frogX--;
-			}else{
-				frogX++;
+		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img)){
+			if(xOff+frogImage32.width>gm.hObjs[i].drawX+gm.hObjs[i].img -> width || xOff<gm.hObjs[i].drawX){
+				if(gm.hObjs[i].speed<0){
+					frogX--;
+				}else{
+					frogX++;
+				}
 			}
 		}
 	}

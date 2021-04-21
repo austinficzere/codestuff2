@@ -159,12 +159,7 @@ void drawGameState(struct gameState *prevState, struct gameState *gs)
 
 	// draw the game map
 	drawMap(prevState -> map[prevState -> gameStage], gs -> map[gs -> gameStage], changeState);
-<<<<<<< HEAD
 	if((prevState -> frogX != gs -> frogX) || (prevState -> frogY != gs -> frogY) || changeState || gs -> gameStage == 3){
-=======
-	// if the frog changed positions, draw the new frog position.
-	if((prevState -> frogX != gs -> frogX) || (prevState -> frogY != gs -> frogY) || changeState){
->>>>>>> 139c90b35e08ed58d6a484175e4ce89760e59872
 		drawFrog(prevState,gs);
 	}
 }
