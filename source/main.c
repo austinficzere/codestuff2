@@ -74,7 +74,7 @@ int main(){
         else {
             drawGameState(&prevState,&gs);
             setCurrToPrev(&prevState, &gs);
-       	    updateGameState(&gs, cs -> controllerButton, sTime);
+       	    updateGameState(&gs, cs -> controllerButton);
         }
     }
 

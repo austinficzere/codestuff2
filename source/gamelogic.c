@@ -24,7 +24,6 @@ const int MAP_COLS = 30;
 const int H_OBJ = 15;
 const int NUMB_OF_STAGES = 4;
 const int ITEM_SPAWN_DIFF = 3;
-const int START_TIME = 300;
 
 // defining functions/structures
 struct gameState initGameState();
@@ -175,7 +174,7 @@ int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 Updates the game frog when a button is pressed, checks for collision, checks if the game ended, spawns
 value packs, updates the harm objects, and updates the game state values.
 */
-void updateGameState(struct gameState *gs, int button, int startTime)
+void updateGameState(struct gameState *gs, int button)
 {
 	// check if game is over
 	if (isGameEnd(gs)){
@@ -204,7 +203,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 
 	// spawn value packs
-	spawnValuePacks(startTime, gs);
+	spawnValuePacks(gs -> startTime, gs);
 
 	// checking for d pad button presses
 	if(button!=NONE_PRESSED){
@@ -286,7 +285,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 
 	// update time
-	gs -> time = START_TIME - (time(0) - startTime);
+	gs -> time = START_TIME - (time(0) - gs -> startTime);
 
 }
 
@@ -492,6 +491,7 @@ struct gameState initGameState()
 	gs.hasLost = 0;
 	gs.gameStage = 0;
 	gs.state = 0;
+	gs.startTime = time(0);
 	return gs;
 }
 
