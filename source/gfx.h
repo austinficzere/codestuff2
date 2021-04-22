@@ -12,7 +12,7 @@ const struct imageStruct pauseMenuImage;
 // Definition for harm object image
 struct harmObjectImg {
 	int length;
-	const struct imageStruct *imgs[]
+	const struct imageStruct *imgs[];
 };
 
 // Definition for the harm object image array
