@@ -29,6 +29,7 @@ struct gameMap
 	int rows,cols;
 	int numbOfHarm;
 	int lastItemSpawn;
+	int timeEnter;
 	struct harmObject *hObjs;
 	struct Tile **table;	
 };

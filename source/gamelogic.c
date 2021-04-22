@@ -107,7 +107,9 @@ int isGameEnd(struct gameState *gs)
 int updateEndScreen(struct gameState *gs, int button){
 	if(button != NONE_PRESSED){
 		*gs = initGameState();
+		return 1;
 	}
+	return 0;
 }
 
 /*
@@ -199,6 +201,10 @@ void updateGameState(struct gameState *gs, int button)
 		gs -> state = 3;
 	}
 
+	if(gs -> map[gs -> gameStage].timeEnter == -1){
+		gs -> map[gs -> gameStage].timeEnter = time(0);
+	}
+
 	// Checking if the frog collides with any objects in the first three stages
 	if(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY) && gs -> gameStage != 3){
 
@@ -228,7 +234,7 @@ void updateGameState(struct gameState *gs, int button)
 	}
 
 	// spawn value packs
-	spawnValuePacks(gs -> startTime, gs);
+	spawnValuePacks(gs -> map[gs -> gameStage].timeEnter, gs);
 
 	// checking for d pad button presses
 	if(button!=NONE_PRESSED){
@@ -385,6 +391,8 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
 			prev -> table[i][j] = copyTile(curr -> table[i][j]);
 		}
 	}
+
+	prev -> timeEnter = curr -> timeEnter;
 
 	// Copying the values in the harms objects
 	for(int i = 0;i<curr -> numbOfHarm;i++){
@@ -557,6 +565,7 @@ struct gameMap initGameMap(int gameStage)
 
 	// Intiializing time for last item spawn
 	map.lastItemSpawn = time(0);
+	map.timeEnter = -1;
 
 	map.rows = MAP_ROWS;
 	map.cols = MAP_COLS;
