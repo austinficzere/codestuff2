@@ -1,3 +1,7 @@
+INFORMATION FOR TA
+Class: CPSC 359
+Names: Austin Ficzere(30093971) and Manbir Sandhu(30086574)
+
 This repository contains a frogger game.
 
 To compile the game, type make in the correct directory where the files are located.
