@@ -505,7 +505,7 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 		}
 	}else{
 		int row = 17;
-		int col = randomNumb(0,MAP_COLS);
+		int col = randomNumb(3,(MAP_COLS/2)-2);
 		int off = 0;
 		for(int i = 0;i<numbOfHarm;i++){
 
