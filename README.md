@@ -9,7 +9,7 @@ Also, to see the game, make sure to press ctrl + alt + f1 in the terminal to ope
 To make the river stage easier, the controller only takes input from single presses. So holding down a button will only move you one space in the 
 desired direction. To move multiple spaces, you need to hit the button multiple times.
 
-The value packs are as follows: Coin -> Adds 1 to score
-                                Boots -> Adds 5 steps to moves left
-                                Clock -> Adds 5 seconds to time
+The value packs are as follows: Coin -> Adds 10 to score
+                                Boots -> Adds 10 steps to moves left
+                                Clock -> Adds 10 seconds to time
                                 Heart -> Adds 1 life to lives

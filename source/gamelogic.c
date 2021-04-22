@@ -24,6 +24,10 @@ const int MAP_COLS = 30;
 const int H_OBJ = 15;
 const int NUMB_OF_STAGES = 4;
 const int ITEM_SPAWN_DIFF = 3;
+const int LIFE_VALUE = 1;
+const int TIME_VALUE = 4;
+const int STEP_VALUE = 3;
+const int SCORE_VALUE = 2;
 
 // defining functions/structures
 struct gameState initGameState();
@@ -215,7 +219,7 @@ void updateGameState(struct gameState *gs, int button)
 	}
 
 	// Checking if the frog is not colliding with any of the logs and is in the water
-	if(!(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)) && gs -> gameStage == 3 && ((gs -> frogY>=2 && gs ->frogY<=6) || ( gs -> frogY >= 12 && gs -> frogY <= 17))){
+	if(!(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)) && gs -> gameStage == 3 && ((gs -> frogY>=2 && gs ->frogY<=7) || ( gs -> frogY >= 12 && gs -> frogY <= 17))){
 		// Decreasing the number of lives and resetting the frog to the beginning position
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
@@ -290,27 +294,27 @@ void updateGameState(struct gameState *gs, int button)
 		int valueStand  = gs -> map[gs -> gameStage].table[gs -> frogY][gs -> frogX].valuePack;
 
 		// If the valuepack is the first one, we increment lives
-		if (valueStand == 1)
+		if (valueStand == LIFE_VALUE)
 		{
 			gs -> numbLives++;
 		}
 
 		// We increment score if it is the second
-		else if (valueStand == 2)
+		else if (valueStand == SCORE_VALUE)
 		{
-			gs -> score++;
+			gs -> score+=10;
 		}
 
 		// We increment the time if it is the third
-		else if (valueStand == 3)
+		else if (valueStand == TIME_VALUE)
 		{
-			gs -> time = (gs -> time) + 5;
+			gs -> startTime = (gs -> startTime) + 10;
 		}
 
 		// We increment the number of moves left if it is the fourth
-		else if (valueStand == 4)
+		else if (valueStand == STEP_VALUE)
 		{
-			gs -> movesLeft = (gs -> movesLeft) + 5;
+			gs -> movesLeft = (gs -> movesLeft) + 10;
 		}
 
 		gs -> map[gs -> gameStage].table[gs -> frogY][gs -> frogX].valuePack = 0;

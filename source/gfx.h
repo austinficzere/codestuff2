@@ -19,8 +19,8 @@ struct harmObjectImg hObjImg;
 // define functions
 void drawGameState(struct gameState *prevState, struct gameState *gs);
 void initGFX();
-void drawMenuScreen();
-void drawPauseScreen();
+void drawMenuScreen(struct gameState *prevState,struct gameState *gs, int menuState);
+void drawPauseScreen(struct gameState *prevState,struct gameState *gs, int pauseState);
 void drawWinLoseScreen(struct gameState *prevState,struct gameState *gs);
 int tileToPixel(int totalPixelLength, int totalTileLength, int currVal);
 
