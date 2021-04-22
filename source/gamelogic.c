@@ -209,6 +209,7 @@ void updateGameState(struct gameState *gs, int button)
 	// check if game is over
 	if (isGameEnd(gs)){
 		gs -> state = END_STATE;
+		return;
 	}
 
 	if(gs -> map[gs -> gameStage].timeEnter == -1){
