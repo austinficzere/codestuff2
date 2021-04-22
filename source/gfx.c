@@ -131,7 +131,7 @@ void drawWinLoseScreen(struct gameState *prevState,struct gameState *gs){
 		} else if(gs -> hasLost){
 			draw((int *)loseMenuImage.image_pixels, loseMenuImage.width, loseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
 		}
-		drawNumber(300,300,gs -> score,!TO_CLEAR);
+		drawNumber(300,360,gs -> score,!TO_CLEAR);
     }
 }
 

@@ -76,10 +76,15 @@ void  *controller_thread(void *arg)
 
         // Initialzing the button
         int button = NONE_PRESSED;
-
+        int prevPress = NONE_PRESSED;
+        int flag;
+        mem -> controllerButton = NONE_PRESSED; 
 	while(mem -> isGameOn){
+                prevPress = button;
         	button = Read_SNES(gpio); // read info from SNES
-		mem -> controllerButton = button;
+                if(button != prevPress){
+                        mem -> controllerButton = button;
+                }
 		wait(750);
 	}
         pthread_exit(0);

@@ -75,6 +75,7 @@ int main(){
             drawGameState(&prevState,&gs);
             setCurrToPrev(&prevState, &gs);
        	    updateGameState(&gs, cs -> controllerButton);
+            cs -> controllerButton = NONE_PRESSED;
         }
     }
 
