@@ -88,9 +88,13 @@ int main(){
         // Resetting the controller
         cs -> controllerButton = NONE_PRESSED;
     }
+    // Setting the game on variable to false in the constroller struct
     cs -> isGameOn = 0;
-    pthread_join(controller_id, NULL);
-    system("clear");
 
+    // Joining the controller thread
+    pthread_join(controller_id, NULL);
+
+    // Clearing the screan and exit
+    system("clear");
     return 1;
 }

@@ -16,7 +16,7 @@
 #include "gfx.h"
 
 // constants
-const int NUMB_LIVES = 3;
+const int NUMB_LIVES = 5;
 const int START_TIME = 300;
 const int NUMB_MOVES = 300;
 const int MAP_ROWS = 20;
@@ -133,6 +133,7 @@ int updateMenuScreen(struct gameState *gs, int button, int menuState)
 
 		// Chaning the gamestate to the actual game
 		gs -> state = 2;
+		gs -> startTime = time(0);
 	}
 	// if we are selecting quit and they press A
 	else if (menuState == 1 && isButtonPressed(button,A_BUTTON))
@@ -334,7 +335,7 @@ void updateGameState(struct gameState *gs, int button)
 			{
 				gs -> gameStage++;
 				gs -> frogY = MAP_ROWS - 2;
-				gs -> score++;
+				gs -> score+=10;
 			}
 	// check if the go back and want to return to previous stage
 	}else if(gs -> gameStage != 0 && gs -> frogY == MAP_ROWS -1){
