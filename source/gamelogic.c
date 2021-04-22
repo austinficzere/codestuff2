@@ -482,7 +482,7 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 			if(hObjs[i].orientation == -1){
 				hObjs[i].speed = -(hObjs[i].speed);
 			}
-			hObjs[i].drawX = randomNumb(0,SCREEN_X);
+			hObjs[i].drawX = randomNumb(100,SCREEN_X-100);
 		}
 	}else{
 		int row = 17;

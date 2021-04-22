@@ -88,6 +88,9 @@ int main(){
         // Resetting the controller
         cs -> controllerButton = NONE_PRESSED;
     }
+    cs -> isGameOn = 0;
+    pthread_join(controller_id, NULL);
+    system("clear");
 
     return 1;
 }
