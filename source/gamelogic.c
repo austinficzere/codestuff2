@@ -33,7 +33,8 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr);
 void updateHarmObjects(struct gameMap gm);
 int collides(int left1, int right1, const struct imageStruct *img1, int left2, int right2, const struct imageStruct *img2);
 int frogCollideHarm(struct gameMap gm, int frogX, int frogY);
-int updateFrogStage(struct gameMap gm, int frogX, int frogY);
+int pixelToTile(int totalPixelLength, int totalTileLength, int currVal);
+int updateFrogWater(struct gameMap gm, int frogX, int frogY);
 
 /*
 @Params: 
@@ -64,6 +65,10 @@ struct Tile copyTile(struct Tile tc){
 	ret.canStand = tc.canStand;
 
 	return ret;
+}
+
+int pixelToTile(int totalPixelLength, int totalTileLength, int currVal){
+	return ((totalTileLength * currVal)/totalPixelLength);
 }
 
 /*
@@ -182,10 +187,12 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		gs -> frogY = MAP_ROWS-2;
 	}
 
-	if(!(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)) && gs -> gameStage == 3 && gs -> frogY < MAP_ROWS - 2 && gs -> frogY > 2){
+	if(!(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)) && gs -> gameStage == 3 && ((gs -> frogY>=2 && gs ->frogY<=6) || ( gs -> frogY >= 12 && gs -> frogY <= 17))){
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
+	}else if (gs -> gameStage == 3){
+		gs -> frogX = updateFrogWater(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY);
 	}
 
 	updateHarmObjects(gs -> map[gs -> gameStage]);
@@ -280,6 +287,23 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	// update time
 	gs -> time = time(0) - startTime;
 
+}
+
+int updateFrogWater(struct gameMap gm, int frogX, int frogY){
+	int xOff = tileToPixel(SCREEN_X, gm.cols, frogX);
+	int yOff = tileToPixel(SCREEN_Y, gm.rows, frogY);
+	for(int i = 0;i<gm.numbOfHarm;i++){
+		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img)){
+			if(gm.hObjs[i].speed>0&& pixelToTile(SCREEN_X,MAP_COLS,gm.hObjs[i].drawX) != pixelToTile(SCREEN_X,MAP_COLS,gm.hObjs[i].drawX+gm.hObjs[i].speed)){
+				frogX++;
+			}else if(gm.hObjs[i].speed<0 && pixelToTile(SCREEN_X,MAP_COLS,gm.hObjs[i].drawX) != pixelToTile(SCREEN_X,MAP_COLS,gm.hObjs[i].drawX+gm.hObjs[i].speed))
+			{
+				frogX--;
+			}
+		}
+	}
+
+	return frogX;
 }
 
 /*
@@ -380,6 +404,7 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 	}else{
 		int row = 17;
 		int col = randomNumb(0,MAP_COLS);
+		int off = 0;
 		for(int i = 0;i<numbOfHarm;i++){
 			hObjs[i].img = hObjImg.imgs[randomNumb(low,low)];
 			hObjs[i].speed = (i%2? 2 : 3);
@@ -392,12 +417,24 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 
 			hObjs[i].drawY = tileToPixel(SCREEN_Y,MAP_ROWS,row);
 			row--;
-			if(row == 1)
+			if(row == 11)
+				row = 7;
+			else if(row == 1){
 				row = 17;
-			col = randomNumb(0,MAP_COLS);
+				off = 1;
+			}
+			if(!off){
+				col = randomNumb(3,(MAP_COLS/2)-2);
+			}
+			else{
+				col = randomNumb((MAP_COLS/2)+2,MAP_COLS-3);
+			}
 		}
 	}
 }
+
+// 2 - 6, 
+// 12-17
 
 /*
 @Params: 
@@ -415,9 +452,9 @@ struct gameMap initGameMap(int gameStage)
 		initHarmObjects(map.hObjs,H_OBJ, gameStage);
 		map.numbOfHarm = H_OBJ;
 	} else{
-		map.hObjs = malloc(16 * sizeof(struct harmObject));
-		initHarmObjects(map.hObjs,16, gameStage);
-		map.numbOfHarm = 16;
+		map.hObjs = malloc(19 * sizeof(struct harmObject));
+		initHarmObjects(map.hObjs,19, gameStage);
+		map.numbOfHarm = 19;
 	}
 	map.lastItemSpawn = time(0);
 	map.rows = MAP_ROWS;
