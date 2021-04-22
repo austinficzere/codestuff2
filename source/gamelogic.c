@@ -45,9 +45,11 @@ We make space for our 2D array of Tile structs and then return the 2D array.
 */
 struct Tile **createTable(int rows, int cols)
 {
+	// Allocating memory for each row of the table
 	struct Tile **table = (struct Tile **) malloc(rows*sizeof(struct Tile *));
 	for(int i = 0;i<rows;i++)
 	{
+		// Allocating memory for each column of the table
 		table[i] = (struct Tile *) malloc(cols * sizeof(struct Tile));
 	}
 	return table;
@@ -60,13 +62,25 @@ struct Tile **createTable(int rows, int cols)
 We copy a Tile struct and return the new copied Tile.
 */
 struct Tile copyTile(struct Tile tc){
+	// Creating a new instnace of the tile
 	struct Tile ret;
+
+	// Copying old values to the new tile
 	ret.valuePack = tc.valuePack;
 	ret.canStand = tc.canStand;
 
 	return ret;
 }
 
+/*
+@Params: totalPixelLength: The total length of the screen X or screen Y
+		 totalTileLength: The number of tiles in the orientation
+		 currVal: The current pixel value
+
+@Returns: We convert the pixel position from either the rows or columns into the 
+row/column position
+
+*/
 int pixelToTile(int totalPixelLength, int totalTileLength, int currVal){
 	return ((totalTileLength * currVal)/totalPixelLength);
 }
@@ -81,11 +95,19 @@ int isGameEnd(struct gameState *gs)
 {
 	if(gs -> hasWon)
 		return 1;
+	// Checking each of the losing conditions 
 	else if(gs->numbLives == 0 || gs->time == 0 || gs -> movesLeft == 0 || gs -> hasLost || gs -> quit){
 		gs -> hasLost = 1;
 		return 1;	
 	}
 	return 0;
+}
+
+
+int updateEndScreen(struct gameState *gs, int button){
+	if(button != NONE_PRESSED){
+		*gs = initGameState();
+	}
 }
 
 /*
@@ -97,17 +119,13 @@ int isGameEnd(struct gameState *gs)
 Updates the menu screen and checks if we have switched the button selected or if the user has pressed one of the
 buttons.
 */
-int updateEndScreen(struct gameState *gs, int button){
-	if(button != NONE_PRESSED){
-		*gs = initGameState();
-	}
-}
-
 int updateMenuScreen(struct gameState *gs, int button, int menuState)
 {
 	// if we are selecting play and they press A
 	if (menuState == 0 && isButtonPressed(button,A_BUTTON))
 	{
+
+		// Chaning the gamestate to the actual game
 		gs -> state = 2;
 	}
 	// if we are selecting quit and they press A
