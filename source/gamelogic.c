@@ -24,6 +24,7 @@ const int MAP_COLS = 30;
 const int H_OBJ = 15;
 const int NUMB_OF_STAGES = 4;
 const int ITEM_SPAWN_DIFF = 3;
+const int START_TIME = 300;
 
 // defining functions/structures
 struct gameState initGameState();
@@ -285,7 +286,7 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	}
 
 	// update time
-	gs -> time = time(0) - startTime;
+	gs -> time = START_TIME - (time(0) - startTime);
 
 }
 
