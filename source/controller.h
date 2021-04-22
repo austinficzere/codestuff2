@@ -1,12 +1,12 @@
 #ifndef CONTROLLER_H_INCLUDED
 #define CONTROLLER_H_INCLUDED
 
-// define functions
+// define functions which can be used from others functinos which include this header
 void *controller_thread(void *);
 int isButtonPressed(int button, int i);
 void wait(int time);
 
-// define constants
+// Exporting constants
 const int NONE_PRESSED;
 const int B_BUTTON;
 const int Y_BUTTON;

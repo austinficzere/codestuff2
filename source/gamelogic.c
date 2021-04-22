@@ -29,6 +29,11 @@ const int TIME_VALUE = 4;
 const int STEP_VALUE = 3;
 const int SCORE_VALUE = 2;
 
+const int MENU_STATE = 0;
+const int PAUSE_STATE = 1;
+const int GAME_STATE = 2;
+const int END_STATE = 3;
+
 // defining functions/structures
 struct gameState initGameState();
 int isGameEnd(struct gameState *gs);
@@ -169,7 +174,7 @@ int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 	{
 		*gs = initGameState();
 		if(pauseState == 0){
-			gs -> state = 2;
+			gs -> state = GAME_STATE;
 		}
 	}
 	// if they press up we select the top button
@@ -185,7 +190,7 @@ int updatePauseScreen(struct gameState *gs, int button, int pauseState)
 	// if they press start we resume the game
 	else if (isButtonPressed(button,START_BUTTON))
 	{
-		gs -> state = 2;
+		gs -> state = GAME_STATE;
 	}
 	return pauseState;
 }
@@ -203,7 +208,7 @@ void updateGameState(struct gameState *gs, int button)
 {
 	// check if game is over
 	if (isGameEnd(gs)){
-		gs -> state = 3;
+		gs -> state = END_STATE;
 	}
 
 	if(gs -> map[gs -> gameStage].timeEnter == -1){
@@ -235,7 +240,7 @@ void updateGameState(struct gameState *gs, int button)
 
 	// if they press start the pause screen opens
 	if (isButtonPressed(button,START_BUTTON)){
-		gs -> state = 1;
+		gs -> state = PAUSE_STATE;
 	}
 
 	// spawn value packs

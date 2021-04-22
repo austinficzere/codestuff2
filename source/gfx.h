@@ -9,11 +9,13 @@ const struct imageStruct frogImage32;
 const struct imageStruct startMenuImage;
 const struct imageStruct pauseMenuImage;
 
+// Definition for harm object image
 struct harmObjectImg {
 	int length;
 	const struct imageStruct *imgs[]
 };
 
+// Definition for the harm object image array
 struct harmObjectImg hObjImg;
 
 // define functions

@@ -5,7 +5,7 @@
 const int SCREEN_X;
 const int SCREEN_Y;
 
-// define struct
+// define struct for the controller thread
 struct ControllerStruct{
 	int controllerButton;
 	int isGameOn;

@@ -15,11 +15,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-// constants
-const int MENU_STATE = 0;
-const int PAUSE_STATE = 1;
-const int GAME_STATE = 2;
-const int END_STATE = 3;
+const int FRAME_RATE = 33333; // 1000000(1 sec)/30(frames)
 
 /*
 @Params: none
@@ -59,7 +55,7 @@ int main(){
     
     // while the player hasn't quit
     while(!gs.quit){
-        wait(33333);
+        wait(FRAME_RATE);
         // if in menustate we draw the screen and update the screen
         if(gs.state == MENU_STATE)
         {
