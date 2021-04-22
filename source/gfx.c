@@ -102,20 +102,30 @@ const int HUD_SCORE = 1;
 const int HUD_STEPS = 2;
 const int HUD_TIME = 3;
 const int HUD_YOFF = 10;
+
+// X and Y off for the scores
 const int SCORE_XOFF = 580;
 const int SCORE_YOFF = 350;
+
+// X off for the score HUD
 const int HUD_SCORE_XOFF = 10;
+
+// X off for the time HUD
 const int HUD_TIME_XOFF = 200;
+
+// X off for the lives HUD
 const int HUD_LIVES_XOFF = 400;
+
+// X off the the steps HUD
 const int HUD_STEPS_XOFF = 600;
+
+// X and Y positions for the different selectors
 const int SELECTOR_XOFF = 535;
 const int SELECTOR_YOFF1 = 415;
 const int SELECTOR_YOFF2 = 505;
 const int PSEL_XOFF = 574;
 const int PSEL_YOFF1 = 363;
 const int PSEL_YOFF2 = 423;
-
-//munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
 
 /*
 @Params: none
@@ -186,9 +196,12 @@ void drawGameState(struct gameState *prevState, struct gameState *gs)
 Draws or clears a number on the screen for the hud items.
 */
 void drawNumber(int xOff, int yOff, int number, int toClear){
+
+	// An array to hold the digits
 	int digits[100];
 	int i = 0;
 
+	// Case for when the number is zero
 	if(number == 0){
 		digits[0] = 0;
 		i++;
@@ -223,10 +236,11 @@ void drawNumber(int xOff, int yOff, int number, int toClear){
 Draws the frog to the screen and clears the previous position of the frog.
 */
 void drawFrog(struct gameState *prevState, struct gameState *gs){
-		// clear 
+		// Finding the X and Y pixel coordinates of the frog
 		int xOff = tileToPixel(SCREEN_X, prevState -> map[prevState -> gameStage].cols, prevState -> frogX);
 		int yOff = tileToPixel(SCREEN_Y, prevState -> map[prevState -> gameStage].rows, prevState -> frogY);
 
+		// Clearing the image of the frog if it has moved
 		if((prevState -> frogX != gs -> frogX) || (prevState -> frogY != gs -> frogY))
 			clearObj(&frogImage32,bg.backgrounds[bg.currentB],xOff,yOff);
 
@@ -257,13 +271,18 @@ void drawMap(struct gameMap prevMap, struct gameMap gm, int changeState){
 	int xOff,yOff;
 	for(int i = 0;i<gm.rows;i++){
 		for(int j = 0;j<gm.cols;j++){
+
+			// Finding the x and y positions of current tile
 			xOff = tileToPixel(SCREEN_X, gm.cols, j);
 			yOff = tileToPixel(SCREEN_Y, gm.rows, i);
 		
+			// Checking if there is a value pack at current tile
 			if (gm.table[i][j].valuePack!=0){
+				// Drawing the value pack
 				draw((int *)vPacks.vp[gm.table[i][j].valuePack] -> image_pixels, vPacks.vp[gm.table[i][j].valuePack] -> width, 
 				vPacks.vp[gm.table[i][j].valuePack] -> height,xOff,yOff,0,TRANSPARENT);
 			}else if(gm.table[i][j].valuePack == 0 && prevMap.table[i][j].valuePack !=gm.table[i][j].valuePack){
+				// Clearing the value pack if frog has picked it up
 				clearObj(vPacks.vp[prevMap.table[i][j].valuePack],bg.backgrounds[bg.currentB],xOff,yOff);
 			}
 		}
@@ -281,7 +300,11 @@ void drawMap(struct gameMap prevMap, struct gameMap gm, int changeState){
 Draws the hud items to the screen (score, lives, time, moves left)
 */
 void drawHUDItem(int prevNumber, int currNumber, int xOff, int yOff, int HUDtype){
+
+	// Drawing the HUD item
 	draw((int *)HUDImages.itemImgs[HUDtype] -> image_pixels,HUDImages.itemImgs[HUDtype] -> width,HUDImages.itemImgs[HUDtype] -> height,xOff,yOff, 0,TRANSPARENT);
+
+	// Clearing previous number and drawing current
 	drawNumber(xOff+HUDImages.itemImgs[HUDtype] -> width+10,yOff,prevNumber,TO_CLEAR);
 	drawNumber(xOff+HUDImages.itemImgs[HUDtype] -> width+10,yOff,currNumber,!TO_CLEAR);
 }
@@ -295,15 +318,24 @@ void drawHUDItem(int prevNumber, int currNumber, int xOff, int yOff, int HUDtype
 Draws the menu screen and the selectors for the buttons.
 */
 void drawMenuScreen(struct gameState *prevState,struct gameState *gs, int menuState){
+
+	// Chceking if previous state is not equal to current
 	if(prevState -> state  != gs -> state){
+		// Drawing menu screen
 		draw((int *)startMenuImage.image_pixels, startMenuImage.width, startMenuImage.height,0,0,0,!TRANSPARENT);
     }
 
 	if(menuState == 0){
+		// Clearing the previous menu selector
 		clearObj(&menuSelector, &startMenuImage, SELECTOR_XOFF, SELECTOR_YOFF2);
+
+		// Drawing the new selector
 		drawSelector(&menuSelector, SELECTOR_XOFF, SELECTOR_YOFF1);
 	}else{
+		// Clearing the previous menu selector
 		clearObj(&menuSelector, &startMenuImage, SELECTOR_XOFF, SELECTOR_YOFF1);
+
+		// Drawing the new selector
 		drawSelector(&menuSelector, SELECTOR_XOFF, SELECTOR_YOFF2);
 	}
 }
@@ -317,17 +349,21 @@ void drawMenuScreen(struct gameState *prevState,struct gameState *gs, int menuSt
 Draws the pause screen and the selectors for the buttons.
 */
 void drawPauseScreen(struct gameState *prevState,struct gameState *gs, int pauseState){
+	// X and Y offsets for the centre of the screen
 	int xOff = (SCREEN_X/2) - (pauseMenuImage.width/2);
 	int yOff = (SCREEN_Y/2) - (pauseMenuImage.height/2);
 
+	// Drawing pause screen if the current state is not equal to the previous state
 	if(prevState -> state  != gs -> state){
 		draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
     }
 
+	// Redrawing pause screen and new selector
 	if(pauseState == 0){
 		draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
 		drawSelector(&pauseSelector, 574, PSEL_YOFF1);
 	}else{
+		//  Redrawing the pause screen and new selector
 		draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
 		drawSelector(&pauseSelector, 574, PSEL_YOFF2);
 	}
@@ -372,9 +408,11 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 	int xSet,xEnd,xInc;
 	int ySet,yEnd,yInc;
 
-	// setting values based on what orienation we want
+	// Setting the values of the looop condition based on the orientation of the iamge
 	int flip = 0;
 	if(orientation == -1){
+
+		// This orientation is for a reflection on the y axis of the image
 		xSet = width -1;
 		ySet = 0;
 		xInc = -1;
@@ -384,6 +422,8 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 		yEnd = height;
 	}
 	else if(orientation == 0){
+
+		// Standard orientation of the image
 		xSet = ySet = 0;
 		xInc = yInc = 1;
 
@@ -392,6 +432,8 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 
 	}
 	else if(orientation == 1){
+
+		// Orientation for a 90 degree rotation clockwise
 		flip = 1;
 
 		ySet = height-1;
@@ -403,6 +445,7 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 		xInc = 1;
 	}
 	else if(orientation == 2){
+		// Orientation for a 180 degree rotation clockwise
 		xSet = width - 1;
 		ySet = height - 1;
 
@@ -411,6 +454,8 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 		yEnd = xEnd = -1;
 	}
 	else{
+
+		// Orientation for a 270 degree rotation clockwise
 		flip = 1;
 
 		ySet = 0;
@@ -423,10 +468,14 @@ void draw(int *pixels, int width, int height, int xOff, int yOff, int orientatio
 	}
 
 	// drawing each pixel to the screen
+
+	// Setting the x and y conidation of the loop
 	int y = ySet;
 	while(y!=yEnd){
 		int x = xSet;
 		while(x!=xEnd){
+
+			// Drawing a pixel if the image is not transparent, or it is transparent but the pixel color is 0
 			if(!transparent || (transparent && pixels[i]!=0)){
 				pixel -> color = pixels[i];
 				pixel -> x = xOff + (flip ? y : x);
@@ -454,9 +503,11 @@ Clears an image from the screen and replaces it with another
 void clearObj(const struct imageStruct *img, const struct imageStruct *rplc,int xOff, int yOff){
 	Pixel *pixel = malloc(sizeof(Pixel));
 
+	// Storing width and heigh of the image that will be replaced
 	int width = img -> width;
 	int height = img -> height;
 
+	// Getting pixels array
 	int *pixels = (int *) rplc -> image_pixels;
 
 	int i;
@@ -464,11 +515,15 @@ void clearObj(const struct imageStruct *img, const struct imageStruct *rplc,int 
 	for(int y = 0; y<height;y++){
 		for(int x = 0;x<width;x++){
 		// replace image with previous item
+
+		// Calulcating the pixel position for which the replacement is on top of the original
 		i = (rplc -> width ) * (yOff+y) + (xOff+x);
+
 		pixel -> color = i< (rplc -> width * rplc -> height) ? pixels[i] : 0x0;
 		pixel -> x = xOff + x;
 		pixel -> y = yOff + y;
 
+		// Drawing the replacement image over the previous
 		drawPixel(pixel);
 
 		}
@@ -505,6 +560,8 @@ void drawSelector(const struct imageStruct *image, int xOff, int yOff)
         pixel: pointer to the pixel we are drawing
 @Returns: none
 Draws a pixel to the screen.
+
+This code was based on the code provided in the tutorial
 */
 void drawPixel(Pixel *pixel){
 	long int location = (pixel->x +framebufferstruct.xOff) * (framebufferstruct.bits/8) +
