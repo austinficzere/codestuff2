@@ -131,7 +131,7 @@ void drawWinLoseScreen(struct gameState *prevState,struct gameState *gs){
 		} else if(gs -> hasLost){
 			draw((int *)loseMenuImage.image_pixels, loseMenuImage.width, loseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
 		}
-		drawNumber(300,360,gs -> score,!TO_CLEAR);
+		drawNumber(580,350,gs -> score,!TO_CLEAR);
     }
 }
 
@@ -176,6 +176,12 @@ Draws or clears a number on the screen for the hud items.
 void drawNumber(int xOff, int yOff, int number, int toClear){
 	int digits[100];
 	int i = 0;
+
+	if(number == 0){
+		digits[0] = 0;
+		i++;
+	}
+
 	// stores the digits of the number in an array so we can draw them later
 	while(number!=0){
 		digits[i] = number%10;

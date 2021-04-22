@@ -479,7 +479,7 @@ struct gameState initGameState()
 	for(int i = 0;i<NUMB_OF_STAGES;i++){
 		gs.map[i] = initGameMap(i);
 	}
-	gs.frogX = MAP_ROWS/2;
+	gs.frogX = MAP_COLS/2;
 	gs.frogY = MAP_ROWS-2;
 	gs.orientation = 0;
 	gs.score = 0;
