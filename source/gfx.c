@@ -102,6 +102,18 @@ const int HUD_SCORE = 1;
 const int HUD_STEPS = 2;
 const int HUD_TIME = 3;
 const int HUD_YOFF = 10;
+const int SCORE_XOFF = 580;
+const int SCORE_YOFF = 350;
+const int HUD_SCORE_XOFF = 10;
+const int HUD_TIME_XOFF = 200;
+const int HUD_LIVES_XOFF = 400;
+const int HUD_STEPS_XOFF = 600;
+const int SELECTOR_XOFF = 535;
+const int SELECTOR_YOFF1 = 415;
+const int SELECTOR_YOFF2 = 505;
+const int PSEL_XOFF = 574;
+const int PSEL_YOFF1 = 363;
+const int PSEL_YOFF2 = 423;
 
 //munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
 
@@ -131,7 +143,7 @@ void drawWinLoseScreen(struct gameState *prevState,struct gameState *gs){
 		} else if(gs -> hasLost){
 			draw((int *)loseMenuImage.image_pixels, loseMenuImage.width, loseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
 		}
-		drawNumber(580,350,gs -> score,!TO_CLEAR);
+		drawNumber(SCORE_XOFF,SCORE_YOFF,gs -> score,!TO_CLEAR);
     }
 }
 
@@ -152,10 +164,10 @@ void drawGameState(struct gameState *prevState, struct gameState *gs)
 	}
 	
 	// draw the hud items
-	drawHUDItem(prevState -> score, gs -> score, 10, HUD_YOFF ,HUD_SCORE);
-	drawHUDItem(prevState -> time, gs -> time, 200,HUD_YOFF,HUD_TIME);
-	drawHUDItem(prevState -> numbLives, gs -> numbLives, 400,HUD_YOFF, HUD_LIVES);
-	drawHUDItem(prevState -> movesLeft, gs -> movesLeft, 600,HUD_YOFF,HUD_STEPS);
+	drawHUDItem(prevState -> score, gs -> score, HUD_SCORE_XOFF, HUD_YOFF ,HUD_SCORE);
+	drawHUDItem(prevState -> time, gs -> time, HUD_TIME_XOFF,HUD_YOFF,HUD_TIME);
+	drawHUDItem(prevState -> numbLives, gs -> numbLives, HUD_LIVES_XOFF, HUD_YOFF, HUD_LIVES);
+	drawHUDItem(prevState -> movesLeft, gs -> movesLeft, HUD_STEPS_XOFF, HUD_YOFF,HUD_STEPS);
 
 	// draw the game map
 	drawMap(prevState -> map[prevState -> gameStage], gs -> map[gs -> gameStage], changeState);
@@ -288,11 +300,11 @@ void drawMenuScreen(struct gameState *prevState,struct gameState *gs, int menuSt
     }
 
 	if(menuState == 0){
-		clearObj(&menuSelector, &startMenuImage, 535, 505);
-		drawSelector(&menuSelector, 535, 415);
+		clearObj(&menuSelector, &startMenuImage, SELECTOR_XOFF, SELECTOR_YOFF2);
+		drawSelector(&menuSelector, SELECTOR_XOFF, SELECTOR_YOFF1);
 	}else{
-		clearObj(&menuSelector, &startMenuImage, 535, 415);
-		drawSelector(&menuSelector, 535, 505);
+		clearObj(&menuSelector, &startMenuImage, SELECTOR_XOFF, SELECTOR_YOFF1);
+		drawSelector(&menuSelector, SELECTOR_XOFF, SELECTOR_YOFF2);
 	}
 }
 
@@ -314,10 +326,10 @@ void drawPauseScreen(struct gameState *prevState,struct gameState *gs, int pause
 
 	if(pauseState == 0){
 		draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
-		drawSelector(&pauseSelector, 574, 363);
+		drawSelector(&pauseSelector, 574, PSEL_YOFF1);
 	}else{
 		draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
-		drawSelector(&pauseSelector, 574, 423);
+		drawSelector(&pauseSelector, 574, PSEL_YOFF2);
 	}
 
 	if(gs -> state == 2){
