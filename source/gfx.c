@@ -209,7 +209,8 @@ void drawFrog(struct gameState *prevState, struct gameState *gs){
 		int xOff = tileToPixel(SCREEN_X, prevState -> map[prevState -> gameStage].cols, prevState -> frogX);
 		int yOff = tileToPixel(SCREEN_Y, prevState -> map[prevState -> gameStage].rows, prevState -> frogY);
 
-		clearObj(&frogImage32,bg.backgrounds[bg.currentB],xOff,yOff);
+		if((prevState -> frogX != gs -> frogX) || (prevState -> frogY != gs -> frogY))
+			clearObj(&frogImage32,bg.backgrounds[bg.currentB],xOff,yOff);
 
 		// Drawing current frog
 		xOff = tileToPixel(SCREEN_X, gs -> map[prevState -> gameStage].cols, gs -> frogX);
@@ -302,20 +303,21 @@ void drawPauseScreen(struct gameState *prevState,struct gameState *gs, int pause
 	int yOff = (SCREEN_Y/2) - (pauseMenuImage.height/2);
 
 	if(prevState -> state  != gs -> state){
-        draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
+		draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
     }
 
 	if(pauseState == 0){
-		clearObj(&pauseSelector, &pauseMenuImage, 574, 423);
+		draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
 		drawSelector(&pauseSelector, 574, 363);
 	}else{
-		clearObj(&pauseSelector, &pauseMenuImage, 574, 363);
+		draw((int *)pauseMenuImage.image_pixels, pauseMenuImage.width, pauseMenuImage.height,xOff,yOff,0,!TRANSPARENT);
 		drawSelector(&pauseSelector, 574, 423);
 	}
 
 	if(gs -> state == 2){
 		clearObj(&pauseMenuImage, bg.backgrounds[bg.currentB], xOff,yOff);
 	}
+
 }
 
 /*

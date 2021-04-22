@@ -186,13 +186,8 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
-	}else if(gs -> gameStage == 3){
-		int updateX = updateFrogStage(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY);
-		gs -> frogX = updateX;
 	}
 
-
-	// update harm objects
 	updateHarmObjects(gs -> map[gs -> gameStage]);
 
 	// if they press start the pause screen opens
@@ -217,16 +212,22 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 			gs -> frogY++;
 			gs -> movesLeft--;
 		}
-		if (isButtonPressed(button,LEFT_BUTTON) && gs -> frogX>0)
+		if (isButtonPressed(button,LEFT_BUTTON))
 		{
 			gs -> orientation = 3;
-			gs -> frogX--;
+			if(gs -> frogX>0)
+				gs -> frogX--;
+			else
+				gs -> frogX = MAP_COLS -1;
 			gs -> movesLeft--;
 		}
-		if (isButtonPressed(button,RIGHT_BUTTON) && gs -> frogX<MAP_COLS)
+		if (isButtonPressed(button,RIGHT_BUTTON))
 		{
 			gs -> orientation = 1;
-			gs -> frogX++;
+			if(gs -> frogX<MAP_COLS)
+				gs -> frogX++;
+			else
+				gs -> frogX = 0;
 			gs -> movesLeft--;
 		}
 	}
@@ -279,23 +280,6 @@ void updateGameState(struct gameState *gs, int button, int startTime)
 	// update time
 	gs -> time = time(0) - startTime;
 
-}
-
-int updateFrogStage(struct gameMap gm, int frogX, int frogY){
-	int xOff = tileToPixel(SCREEN_X, gm.cols, frogX);
-	int yOff = tileToPixel(SCREEN_Y, gm.rows, frogY);
-	for(int i = 0;i<gm.numbOfHarm;i++){
-		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img)){
-			if(xOff+frogImage32.width>gm.hObjs[i].drawX+gm.hObjs[i].img -> width || xOff<gm.hObjs[i].drawX){
-				if(gm.hObjs[i].speed<0){
-					frogX--;
-				}else{
-					frogX++;
-				}
-			}
-		}
-	}
-	return frogX;
 }
 
 /*
@@ -382,28 +366,37 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 		low = 5;
 		high = 6;
 	}
-	int count = 2;
-	for(int i = 0;i<numbOfHarm;i++){
-		hObjs[i].img = hObjImg.imgs[randomNumb(low,high)];
-		if(gameStage == 3){
-			hObjs[i].speed = randomNumb(1,5);
-		}else{
+	if(gameStage != 3){
+		for(int i = 0;i<numbOfHarm;i++){
+			hObjs[i].img = hObjImg.imgs[randomNumb(low,high)];
 			hObjs[i].speed = randomNumb(1,20);
-		}
-		if(gameStage == 3){
-			hObjs[i].drawY = tileToPixel(SCREEN_Y,MAP_ROWS,count);
-			count++;
-			if(count == 18)
-				count = 2;
-		}else{
 			hObjs[i].drawY = randomNumb(100,SCREEN_Y-110);
+			hObjs[i].orientation = (randomNumb(0,1) ? 0 : -1);
+			if(hObjs[i].orientation == -1){
+				hObjs[i].speed = -(hObjs[i].speed);
+			}
+			hObjs[i].drawX = randomNumb(0,SCREEN_X);
 		}
-		hObjs[i].orientation = (randomNumb(0,1) ? 0 : -1);
-		if(hObjs[i].orientation == -1){
-			hObjs[i].speed = -(hObjs[i].speed);
+	}else{
+		int row = 17;
+		int col = randomNumb(0,MAP_COLS);
+		for(int i = 0;i<numbOfHarm;i++){
+			hObjs[i].img = hObjImg.imgs[randomNumb(low,low)];
+			hObjs[i].speed = (i%2? 2 : 3);
+			hObjs[i].drawX = tileToPixel(SCREEN_X,MAP_COLS,col);
+
+			hObjs[i].orientation = (i%2? 0 : -1);
+			if(hObjs[i].orientation == -1){
+				hObjs[i].speed = -(hObjs[i].speed);
+			}
+
+			hObjs[i].drawY = tileToPixel(SCREEN_Y,MAP_ROWS,row);
+			row--;
+			if(row == 1)
+				row = 17;
+			col = randomNumb(0,MAP_COLS);
 		}
-		hObjs[i].drawX = randomNumb(0,SCREEN_X);
-	}	
+	}
 }
 
 /*
@@ -422,9 +415,9 @@ struct gameMap initGameMap(int gameStage)
 		initHarmObjects(map.hObjs,H_OBJ, gameStage);
 		map.numbOfHarm = H_OBJ;
 	} else{
-		map.hObjs = malloc(18 * sizeof(struct harmObject));
-		initHarmObjects(map.hObjs,18, gameStage);
-		map.numbOfHarm = 18;
+		map.hObjs = malloc(16 * sizeof(struct harmObject));
+		initHarmObjects(map.hObjs,16, gameStage);
+		map.numbOfHarm = 16;
 	}
 	map.lastItemSpawn = time(0);
 	map.rows = MAP_ROWS;
