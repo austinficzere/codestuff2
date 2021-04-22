@@ -77,7 +77,6 @@ void  *controller_thread(void *arg)
         // Initialzing the button
         int button = NONE_PRESSED;
         int prevPress = NONE_PRESSED;
-        int flag;
         mem -> controllerButton = NONE_PRESSED; 
 	while(mem -> isGameOn){
                 prevPress = button;

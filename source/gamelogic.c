@@ -333,7 +333,7 @@ void updateGameState(struct gameState *gs, int button)
 		if (gs -> gameStage == 3)
 			{
 				gs -> hasWon = 1;
-				gs -> score = ((gs -> time) + (gs -> movesLeft) + (gs -> numbLives)) * 2;
+				gs -> score += ((gs -> time) + (gs -> movesLeft) + (gs -> numbLives)) * 2;
 			}
 			// otherwise go to next stage
 			else
