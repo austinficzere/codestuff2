@@ -199,20 +199,27 @@ void updateGameState(struct gameState *gs, int button)
 		gs -> state = 3;
 	}
 
+	// Checking if the frog collides with any objects in the first three stages
 	if(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY) && gs -> gameStage != 3){
+
+		// Resetting the number of lives and resetting the frog to the beginning position
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
 	}
 
+	// Checking if the frog is not colliding with any of the logs and is in the water
 	if(!(frogCollideHarm(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY)) && gs -> gameStage == 3 && ((gs -> frogY>=2 && gs ->frogY<=6) || ( gs -> frogY >= 12 && gs -> frogY <= 17))){
+		// Decreasing the number of lives and resetting the frog to the beginning position
 		gs -> numbLives--;
 		gs -> frogX = MAP_COLS/2;
 		gs -> frogY = MAP_ROWS-2;
 	}else if (gs -> gameStage == 3){
+		// Updating the frogs X position 
 		gs -> frogX = updateFrogWater(gs -> map[gs -> gameStage], gs -> frogX, gs -> frogY);
 	}
 
+	// Updating the positions of the harm objects
 	updateHarmObjects(gs -> map[gs -> gameStage]);
 
 	// if they press start the pause screen opens
@@ -225,30 +232,44 @@ void updateGameState(struct gameState *gs, int button)
 
 	// checking for d pad button presses
 	if(button!=NONE_PRESSED){
+		// If the button pressed is up we move the frog up and change the orientation of the frog
 		if (isButtonPressed(button,UP_BUTTON) && gs -> frogY>0)
 		{
 			gs -> orientation = 0;
 			gs -> frogY--;
+
+			// Decrementing the number of moves left
 			gs -> movesLeft--;
 		}
+		// If the button pressed is up we move the frog down and change the orientation of the frog
 		if (isButtonPressed(button,DOWN_BUTTON) && gs -> frogY<MAP_ROWS-1)
 		{
 			gs -> orientation = 2;
 			gs -> frogY++;
+
+			// Decrementing the number of moves left
 			gs -> movesLeft--;
 		}
+
+		// If the button pressed is left we move the frog down and change the orientation of the frog
 		if (isButtonPressed(button,LEFT_BUTTON))
 		{
 			gs -> orientation = 3;
+
+			// If the frog is not at the end of the screen we just move the frog left
 			if(gs -> frogX>0)
 				gs -> frogX--;
+			// Otherwise we move the frog to the rightmost position
 			else
 				gs -> frogX = MAP_COLS -1;
 			gs -> movesLeft--;
 		}
+		// If the button pressed is left we move the frog down and change the orientation of the frog
 		if (isButtonPressed(button,RIGHT_BUTTON))
 		{
 			gs -> orientation = 1;
+
+			// If the frog is not at the end of the screen we just move the frog right
 			if(gs -> frogX<MAP_COLS)
 				gs -> frogX++;
 			else
@@ -257,21 +278,30 @@ void updateGameState(struct gameState *gs, int button)
 		}
 	}
 
-	// Check collision with harm object
+	// We check if we are standing ontop of a valuepack
 	if(gs -> map[gs -> gameStage].table[gs -> frogY][gs -> frogX].valuePack != 0){
+		// Getting the value of the valuepack
 		int valueStand  = gs -> map[gs -> gameStage].table[gs -> frogY][gs -> frogX].valuePack;
+
+		// If the valuepack is the first one, we increment lives
 		if (valueStand == 1)
 		{
 			gs -> numbLives++;
 		}
+
+		// We increment score if it is the second
 		else if (valueStand == 2)
 		{
 			gs -> score++;
 		}
+
+		// We increment the time if it is the third
 		else if (valueStand == 3)
 		{
 			gs -> time = (gs -> time) + 5;
 		}
+
+		// We increment the number of moves left if it is the fourth
 		else if (valueStand == 4)
 		{
 			gs -> movesLeft = (gs -> movesLeft) + 5;
@@ -307,11 +337,26 @@ void updateGameState(struct gameState *gs, int button)
 
 }
 
+/*
+@Params: 
+        gm: the gameMap struct
+		frogX: The x position of the frog on the 2D grid
+		frogY: The y position of the frog on the 2D grid
+@Returns: frogX: The updated frog x poisition
+This function updates the frogs position when on the logs in the water
+*/
 int updateFrogWater(struct gameMap gm, int frogX, int frogY){
+
+	// Finding the x position of the frog in pixels
 	int xOff = tileToPixel(SCREEN_X, gm.cols, frogX);
+
+	// Finding the y position of the frog in pixels
 	int yOff = tileToPixel(SCREEN_Y, gm.rows, frogY);
 	for(int i = 0;i<gm.numbOfHarm;i++){
+
+		// Checking if the frog collides with the current object
 		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img)){
+
 			if(gm.hObjs[i].speed>0&& pixelToTile(SCREEN_X,MAP_COLS,gm.hObjs[i].drawX) != pixelToTile(SCREEN_X,MAP_COLS,gm.hObjs[i].drawX+gm.hObjs[i].speed)){
 				frogX++;
 			}else if(gm.hObjs[i].speed<0 && pixelToTile(SCREEN_X,MAP_COLS,gm.hObjs[i].drawX) != pixelToTile(SCREEN_X,MAP_COLS,gm.hObjs[i].drawX+gm.hObjs[i].speed))
@@ -321,6 +366,7 @@ int updateFrogWater(struct gameMap gm, int frogX, int frogY){
 		}
 	}
 
+	// Returing the updated frogX
 	return frogX;
 }
 
@@ -329,15 +375,18 @@ int updateFrogWater(struct gameMap gm, int frogX, int frogY){
         prev: a pointer to the previous game map
 		curr: a pointer to the current game map
 @Returns: none
-We set the current game map to previous one so that we can access it.
+We set the current game map to previous one.
 */
 void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
+
+	// Copying each tile in the map
 	for(int i = 0;i<MAP_ROWS;i++){
 		for(int j = 0;j<MAP_COLS;j++){
 			prev -> table[i][j] = copyTile(curr -> table[i][j]);
 		}
 	}
 
+	// Copying the values in the harms objects
 	for(int i = 0;i<curr -> numbOfHarm;i++){
 		prev -> hObjs[i].img = curr -> hObjs[i].img;
 		prev -> hObjs[i].drawX = curr -> hObjs[i].drawX;
@@ -351,13 +400,16 @@ void setCurrToPrevMap(struct gameMap *prev, struct gameMap *curr){
         prev: a pointer to the previous game state
 		curr: a pointer to the current game state
 @Returns: none
-We set the current game state to previous one so that we can access it.
+We set the current game state to previous.
 */
 void setCurrToPrev(struct gameState *prev, struct gameState *curr){
 
+	// Copying the maps
 	for(int i = 0;i<NUMB_OF_STAGES;i++){
 		setCurrToPrevMap(&(prev -> map[i]), &(curr -> map[i]));
 	}
+
+	// Copying all other instanve variables
 	prev -> frogX = curr -> frogX;
 	prev -> frogY = curr -> frogY;
 	prev -> orientation = curr -> orientation;
@@ -395,24 +447,37 @@ Initializes the harm objects on the screen to random spots.
 void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 	int low;
 	int high;
+
+	// The indicies for the harm objects in the first stage
 	if(gameStage == 0){
 		low = 0;
 		high = 1;
 	}else if(gameStage == 1){
+	// The indices for the harm objects in the second stage
 		low = 2;
 		high = 3;
 	}else if(gameStage == 2){
+	// The indicies for the harm objects in the third stage
 		low = 4;
 		high = 4;
 	}else{
+	// The indicies for the harm objects in the fourth stage
 		low = 5;
 		high = 6;
 	}
 	if(gameStage != 3){
+		// Initializing harm objects for stages 1-3
 		for(int i = 0;i<numbOfHarm;i++){
+			// Setting the image of the objects to a random image
 			hObjs[i].img = hObjImg.imgs[randomNumb(low,high)];
+
+			// Setting the speed of the objects
 			hObjs[i].speed = randomNumb(1,20);
+
+			// Setting the a random Y position for the objects
 			hObjs[i].drawY = randomNumb(100,SCREEN_Y-110);
+
+			// Setting a random orientation for the object
 			hObjs[i].orientation = (randomNumb(0,1) ? 0 : -1);
 			if(hObjs[i].orientation == -1){
 				hObjs[i].speed = -(hObjs[i].speed);
@@ -424,23 +489,35 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 		int col = randomNumb(0,MAP_COLS);
 		int off = 0;
 		for(int i = 0;i<numbOfHarm;i++){
+
+			// Initializing the image
 			hObjs[i].img = hObjImg.imgs[randomNumb(low,low)];
+
+			// Initiailizing the speed
 			hObjs[i].speed = (i%2? 2 : 3);
+
+			// Initiailizing the X position
 			hObjs[i].drawX = tileToPixel(SCREEN_X,MAP_COLS,col);
 
 			hObjs[i].orientation = (i%2? 0 : -1);
 			if(hObjs[i].orientation == -1){
 				hObjs[i].speed = -(hObjs[i].speed);
 			}
-
+			// Initilizing the y position
 			hObjs[i].drawY = tileToPixel(SCREEN_Y,MAP_ROWS,row);
+
+			// Changing the row
 			row--;
+
+			// Accounting for the middle area
 			if(row == 11)
 				row = 7;
 			else if(row == 1){
 				row = 17;
 				off = 1;
 			}
+
+			// Updating the columns of the harm object
 			if(!off){
 				col = randomNumb(3,(MAP_COLS/2)-2);
 			}
@@ -451,9 +528,6 @@ void initHarmObjects(struct harmObject *hObjs, int numbOfHarm, int gameStage){
 	}
 }
 
-// 2 - 6, 
-// 12-17
-
 /*
 @Params: 
         gameStage: the stage of the game
@@ -462,19 +536,28 @@ Intiializing the gameMap.
 */
 struct gameMap initGameMap(int gameStage)
 {
+	// Creating the map struct
 	struct gameMap map;
+
+	// Creating the table
 	map.table = createTable(MAP_ROWS,MAP_COLS);
 
+	// Allocating memory for the stages !=3
 	if(gameStage != 3){
 		map.hObjs = malloc(H_OBJ * sizeof(struct harmObject));
 		initHarmObjects(map.hObjs,H_OBJ, gameStage);
 		map.numbOfHarm = H_OBJ;
 	} else{
+
+		// Allocating memory for the final stage
 		map.hObjs = malloc(19 * sizeof(struct harmObject));
 		initHarmObjects(map.hObjs,19, gameStage);
 		map.numbOfHarm = 19;
 	}
+
+	// Intiializing time for last item spawn
 	map.lastItemSpawn = time(0);
+
 	map.rows = MAP_ROWS;
 	map.cols = MAP_COLS;
 	for(int i = 0;i<MAP_ROWS;i++){
@@ -489,14 +572,19 @@ struct gameMap initGameMap(int gameStage)
 /*
 @Params: none
 @Returns: the initial gameState struct
-Intiializing the gameState.
+Intializing the gameState.
 */
 struct gameState initGameState()
 {
+	// Creating the gamestate struct
 	struct gameState gs;
+
+	// Initializing each of the maps
 	for(int i = 0;i<NUMB_OF_STAGES;i++){
 		gs.map[i] = initGameMap(i);
 	}
+
+	// Initializing the other instance variables
 	gs.frogX = MAP_COLS/2;
 	gs.frogY = MAP_ROWS-2;
 	gs.orientation = 0;
@@ -521,31 +609,17 @@ Updates the posisitions of the harm objects on the screen.
 */
 void updateHarmObjects(struct gameMap gm){
 	for(int i = 0;i<gm.numbOfHarm;i++){
+
+		// Updating the x position of the harm objects
 		gm.hObjs[i].drawX = gm.hObjs[i].drawX + gm.hObjs[i].speed;
 		int width = gm.hObjs[i].img -> width;
+
+		// Resetting the objects position if is out of the screen
 		if(gm.hObjs[i].drawX + width<0){
 			gm.hObjs[i].drawX = SCREEN_X-(gm.hObjs[i].img -> width);
 
 		}else if(gm.hObjs[i].drawX >= SCREEN_X){
 			gm.hObjs[i].drawX = 0;
-		}
-	}
-}
-
-/*
-@Params: 
-        arg: pointer to the argument we pass to the thread
-@Returns: none
-The thread that acts as a harm object.
-*/
-void  *harm_obj_thread(void *arg){
-	struct harmObject *obj = (struct harmObject *)arg;
-	while(1){
-		obj -> drawX = obj -> drawX + obj -> speed;
-		if(obj -> drawX<0){
-			obj -> drawX = SCREEN_X-(obj -> img -> width);
-		}else if(obj -> drawX >= SCREEN_X){
-			obj -> drawX = 0;
 		}
 	}
 }
@@ -561,6 +635,8 @@ Checks if the frog has collided with a harm object.
 int frogCollideHarm(struct gameMap gm, int frogX, int frogY){
 	int xOff = tileToPixel(SCREEN_X, gm.cols, frogX);
 	int yOff = tileToPixel(SCREEN_Y, gm.rows, frogY);
+
+	// Checking if the frog collides with any of the objects in the current map
 	for(int i = 0;i<gm.numbOfHarm;i++){
 		if(collides(xOff,yOff,&frogImage32,gm.hObjs[i].drawX,gm.hObjs[i].drawY,gm.hObjs[i].img)){
 			return 1;

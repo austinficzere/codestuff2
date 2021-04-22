@@ -27,24 +27,33 @@ const int END_STATE = 3;
 Initialize our structs and enter the game loop to keep updating things while the player has not quit.
 */
 int main(){
-    int sTime = time(0);
-    srand(sTime);
+    // Setting the seed of the random function
+    srand(time(0));
+
+    // Creating the controller struct used to share inforamtion between the thread
 	struct ControllerStruct *cs;
 	cs = malloc(sizeof(struct ControllerStruct));
+
+    // Setting the game on
     cs -> isGameOn = 1;
 
+    // Pthread initialization for the controller thread
 	pthread_t controller_id;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 
+    // Creating the controller thread
 	pthread_create(&controller_id,&attr,controller_thread, (void *) cs);
 
+    // Initializing the game state and the previous state
     struct gameState gs = initGameState();
     struct gameState prevState = initGameState();
     prevState.state = -1;
 
+    // Initializing the gfx
     initGFX();
 
+    /// Variables for the current menu and the current pause
     int currMenuState = 0;
     int currPauseState = 0;
     
@@ -76,6 +85,7 @@ int main(){
             setCurrToPrev(&prevState, &gs);
        	    updateGameState(&gs, cs -> controllerButton);
         }
+        // Resetting the controller
         cs -> controllerButton = NONE_PRESSED;
     }
 
