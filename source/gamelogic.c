@@ -25,8 +25,8 @@ const int H_OBJ = 15;
 const int NUMB_OF_STAGES = 4;
 const int ITEM_SPAWN_DIFF = 8;
 const int LIFE_VALUE = 1;
-const int TIME_VALUE = 4;
-const int STEP_VALUE = 3;
+const int TIME_VALUE = 3;
+const int STEP_VALUE = 4;
 const int SCORE_VALUE = 2;
 
 const int MENU_STATE = 0;
